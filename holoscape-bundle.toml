@@ -1,0 +1,16 @@
+[[instances]]
+name = "Testing DNA"
+id = "__passthrough"
+dna_hash = "QmXA95Z3A1efoQX8mixJYeJs9GUn25tHYBhZs7JboQbz1W"
+# Optional, might also be retrieved from hchc via hash long-term
+uri = "file:./dist/passthrough-dna.dna.json"
+
+[[UIs]]
+name = "Basic Chat"
+id = "chat-channel"
+ui_bundle_hash = "Qm34abcde"
+uri = "file:./ui.zip"
+
+[[UIs.instance_references]]
+ui_handle = "test-instance"
+instance_id = "__passthrough"
