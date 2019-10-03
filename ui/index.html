@@ -180,7 +180,7 @@
 		  }
 		});
 
-		window.holochainclient.connect({url: "ws://localhost:8888"}).then(({callZome, onSignal}) => {
+		window.holochainclient.connect().then(({callZome, onSignal}) => {
 			app.callZome = callZome
 			onSignal((signal) => {
 				if (signal.signal.signal_type === "Trace") {
