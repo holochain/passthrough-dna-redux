@@ -1,0 +1,196 @@
+<html>
+	<head>
+		<!-- development version, includes helpful console warnings -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		<script type="text/javascript" src="hc-web-client-0.5.1.browser.min.js"></script>
+		<style>
+			.scroll-list {
+		    height: 20em;
+		    line-height: 2em;
+		    border: 1px solid #ccc;
+		    padding: 0;
+		    margin: 0;
+		    overflow: scroll;
+		    overflow-x: hidden;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="app">
+			<h3>Testing DNA</h3>
+
+			<div style="width: 100%; display: table;">
+			<div style="display: table-row">
+
+				<div style="display: table-cell;">
+					<h5>Log</h5>	
+			    <ul id="log" class="scroll-list">
+			        <li class="action" v-for="(log, index) in logs">
+			            <div>
+			            	<span>{{ log.timestamp.toISOString() }}</span>
+			            	<span>{{ log.text }}</span>
+			            </div>
+			        </li>
+			    </ul>
+			  </div>
+
+				<div style="width: 600px; display: table-cell;">
+					<h5>Actions</h5>	
+			    <ul id="actions" class="scroll-list">
+			        <li class="action" v-for="(action, index) in signals">
+			            <div>
+			            		<span>{{ action.timestamp.toISOString() }}</span>
+			                <a data-toggle="collapse" 
+			                    :data-target="'#action-'+index" 
+			                    role="button"
+			                    :class="'bade badge-pill badge-' + actionTypeToBadge(action.action_type)"
+			                >
+			                    {{ action.action_type }}
+			                </a>
+			            </div>
+			            <div v-bind:id="'action-'+index" class="collapse">{{ action.data }}</div>
+			        </li>
+			    </ul>
+			  </div>
+
+		  </div>
+		 	</div>
+
+	    <hr />
+			<h5>Entries</h5>
+			<div>
+				<label for="commit-content">Content</label>
+				<input id="commit-content" v-model="commitContent" placeholder="example content"><button v-on:click="commitEntry">Commit</button>
+			</div>
+
+			<div>
+				<label for="get-entry-hash">Address</label>
+				<input id="get-entry-hash" v-model="getEntryHash" placeholder="Qm..."><button v-on:click="getEntry">Get</button>
+			</div>
+
+			<hr />
+
+			<h5>Links</h5>
+
+			<div>
+				<label for="link-base">Base</label>
+				<input id="link-base" v-model="linkBase" placeholder="Qm...">
+				<label for="link-target">Target</label>
+				<input id="link-target" v-model="linkTarget" placeholder="Qm...">
+				<button v-on:click="linkEntries">Link</button>
+			</div>
+
+			<div>
+				<label for="get-links-base">Base</label>
+				<input id="get-links-base" v-model="getLinksBase" placeholder="Qm...">
+				<button v-on:click="getLinks">Get Links</button>
+			</div>
+
+			<hr />
+
+			<h5>Direct Messaging</h5>
+
+			<div>
+				<label for="dm-content">Content</label>
+				<input id="dm-content" v-model="messageContent" placeholder="some message">
+				<label for="dm-to">To</label>
+				<input id="dm-to" v-model="toAgent" placeholder="HcS...">
+				<button v-on:click="sendMessage">Send</button>
+			</div>			
+
+    </div>
+	</body>
+
+	<script>
+
+		const makeCall = (fnName) => (payload) => {
+    	app.logs.push({
+    		timestamp: new Date(),
+    		text: `"${fnName}"" called with ${JSON.stringify(payload)}`,
+    		error: false,
+    	})
+      app.callZome("test-instance", "main", fnName)(payload)
+      .then(result => {
+      	app.logs.push({
+      		timestamp: new Date(),
+      		text: result,
+      		error: false,
+      	})
+      })
+      .catch(err => {
+      	app.logs.push({
+      		timestamp: new Date(),
+      		text: err,
+      		error: true,
+      	})
+      })			
+		}
+
+		var app = new Vue({ 
+	    el: '#app',
+	    data: {
+    		signals: [],
+    		logs: [],
+        call: () => () => Promise.reject("Not connected to Holochain!"),
+        commitContent: "",
+        getEntryHash: "",
+        toAgent: "",
+        messageContent: "",
+        linkBase: "",
+        linkTarget: "",
+        getLinksBase: "",
+	    },
+		  methods: {
+		    commitEntry: function () {
+		      makeCall("commit_entry")({content: app.commitContent})
+		    },
+		    getEntry: function () {
+		      makeCall("get_entry")({address: app.getEntryHash})
+		    },
+		    sendMessage: function () {
+		      makeCall("send")({to_agent: app.toAgent, payload: app.messageContent})
+		    },
+		    linkEntries: function () {
+		      makeCall("link_entries")({base: app.linkBase, target: app.linkTarget})
+		    },      
+		    getLinks: function () {
+		      makeCall("get_links")({base: app.getLinksBase})
+		    },   
+		    actionTypeToBadge: (actionType) => {
+            switch(actionType) {
+                case "SignalZomeFunctionCall": return "info"
+                case "ReturnZomeFunctionResult": return "info"
+                case "ReturnValidationPackage": return "secondary"
+                case "ReturnValidationResult": return "secondary"
+                case "Commit": return "success"
+                case "Publish": return "success"
+                case "Hold": return "danger"
+                case "Query": return "light"
+                case "RespondQuery": return "dark"
+                case "HandleQuery": return "light"
+                case "QueryTimeout": return "warning"
+                default: return "primary"
+            }
+        },
+		  }
+		});
+
+		window.holochainclient.connect({url: "ws://localhost:8888"}).then(({callZome, onSignal}) => {
+			app.callZome = callZome
+			onSignal((signal) => {
+				if (signal.signal.signal_type === "Trace") {
+					const action = signal.signal.action
+					action.timestamp = new Date()
+					app.signals.push(action)
+				}
+			})
+		})
+
+	</script>
+
+</html>

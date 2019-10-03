@@ -111,7 +111,7 @@ mod my_zome {
         to_agent: Address, 
         payload: String, 
     ) -> ZomeApiResult<String> {
-        hdk::send(to_agent, payload, Timeout::new(60000))
+        hdk::send(to_agent, payload, Timeout::new(5000))
     }
 
 }
