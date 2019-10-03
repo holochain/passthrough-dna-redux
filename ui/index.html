@@ -93,6 +93,24 @@
 
 			<hr />
 
+			<h5>Update/Delete</h5>
+
+			<div>
+				<label for="update-address">Old Address</label>
+				<input id="update-address" v-model="updateAddress" placeholder="Qm...">
+				<label for="update-content">New Content</label>
+				<input id="update-content" v-model="updateContent" placeholder="new content">
+				<button v-on:click="updateEntry">Update</button>
+			</div>		
+
+			<div>
+				<label for="remove-address">Address</label>
+				<input id="remove-address" v-model="removeAddress" placeholder="Qm...">
+				<button v-on:click="removeEntry">Remove</button>
+			</div>	
+
+			<hr />	
+
 			<h5>Direct Messaging</h5>
 
 			<div>
@@ -144,6 +162,9 @@
         linkBase: "",
         linkTarget: "",
         getLinksBase: "",
+        updateAddress: "",
+        updateContent: "",
+        removeAddress: "",
 	    },
 		  methods: {
 		    commitEntry: function () {
@@ -160,7 +181,13 @@
 		    },      
 		    getLinks: function () {
 		      makeCall("get_links")({base: app.getLinksBase})
+		    },  
+		    updateEntry: function () {
+		      makeCall("update_entry")({address: app.updateAddress, new_content: app.updateContent})
 		    },   
+		    removeEntry: function () {
+		      makeCall("remove_entry")({address: app.removeAddress})
+		    },    
 		    actionTypeToBadge: (actionType) => {
             switch(actionType) {
                 case "SignalZomeFunctionCall": return "info"

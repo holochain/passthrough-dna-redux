@@ -12,7 +12,7 @@ test_agent = true
 
 [[dnas]]
 file = '/home/willem/repos/passthrough-dna/dist/passthrough-dna.dna.json'
-hash = 'QmXA95Z3A1efoQX8mixJYeJs9GUn25tHYBhZs7JboQbz1W'
+hash = 'QmYRcwpBT6aScxNUsFRnmrPPqgdEm1wtHtkghFEC4Yiu8e'
 id = 'hc-run-dna'
 
 [[instances]]
@@ -45,5 +45,5 @@ rules = []
 type = 'cmd'
 
 [signals]
-consistency = true
-trace = true
+consistency = false
+trace = false

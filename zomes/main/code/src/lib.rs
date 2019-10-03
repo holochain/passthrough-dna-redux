@@ -92,6 +92,22 @@ mod my_zome {
     }
 
     #[zome_fn("hc_public")]
+    fn update_entry(
+        new_content: String, 
+        address: Address
+    ) -> ZomeApiResult<Address> {
+        hdk::update_entry(
+            Entry::App("generic_entry".into(), JsonString::from_json(&new_content)),
+            &address
+        )
+    }
+
+    #[zome_fn("hc_public")]
+    fn remove_entry(address: Address) -> ZomeApiResult<Address> {
+        hdk::remove_entry(&address)
+    }
+
+    #[zome_fn("hc_public")]
     fn link_entries(
         base: Address, 
         target: Address, 
