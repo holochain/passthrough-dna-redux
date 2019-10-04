@@ -12,7 +12,7 @@ test_agent = true
 
 [[dnas]]
 file = '/home/willem/repos/passthrough-dna/dist/passthrough-dna.dna.json'
-hash = 'QmYRcwpBT6aScxNUsFRnmrPPqgdEm1wtHtkghFEC4Yiu8e'
+hash = 'QmNT541aXcG4mzUw1fbpxkgCqextkm4mgGyyTcNbG5ShAg'
 id = 'hc-run-dna'
 
 [[instances]]
