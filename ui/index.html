@@ -24,6 +24,8 @@
 		<div id="app">
 			<h3>Testing DNA</h3>
 
+			<span>Your agentId is {{ agentId }}</span>
+
 			<div style="width: 100%; display: table;">
 			<div style="display: table-row">
 
@@ -126,7 +128,7 @@
 
 	<script>
 
-		const makeCall = (fnName) => (payload) => {
+	const makeCall = (fnName) => (payload) => {
     	app.logs.push({
     		timestamp: new Date(),
     		text: `"${fnName}"" called with ${JSON.stringify(payload)}`,
@@ -165,6 +167,7 @@
         updateAddress: "",
         updateContent: "",
         removeAddress: "",
+        agentId: "<unknown>"
 	    },
 		  methods: {
 		    commitEntry: function () {
@@ -207,13 +210,23 @@
 		  }
 		});
 
-		window.holochainclient.connect().then(({callZome, onSignal}) => {
+		window.holochainclient.connect({url: "ws://localhost:8888"}).then(({callZome, onSignal}) => {
 			app.callZome = callZome
+			callZome("test-instance", "main", "whoami")({}).then(result => {
+				app.agentId = JSON.parse(result).Ok
+			})
 			onSignal((signal) => {
+				console.log(signal)
 				if (signal.signal.signal_type === "Trace") {
 					const action = signal.signal.action
 					action.timestamp = new Date()
 					app.signals.push(action)
+				} else if (signal.signal.signal_type === "User" && signal.signal.name === "message_received") {
+	      	app.logs.push({
+	      		timestamp: new Date(),
+	      		text: `Received direct message: ${signal.signal.arguments}`,
+	      		error: false,
+	      	})					
 				}
 			})
 		})

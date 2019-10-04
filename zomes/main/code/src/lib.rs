@@ -79,6 +79,11 @@ mod my_zome {
     }
 
     #[zome_fn("hc_public")]
+    fn whoami() -> ZomeApiResult<Address> {
+        Ok(hdk::AGENT_ADDRESS.to_string().into())
+    }
+
+    #[zome_fn("hc_public")]
     fn commit_entry(content: String) -> ZomeApiResult<Address> {
         hdk::commit_entry(&Entry::App(
             "generic_entry".into(),
