@@ -1,10 +1,11 @@
 <html>
 	<head>
 		<!-- development version, includes helpful console warnings -->
-		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	    <script> window.$ = window.jQuery = require('jquery'); </script>
+	    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 		<script type="text/javascript" src="hc-web-client-0.5.1.browser.min.js"></script>
 		<style>
@@ -46,14 +47,15 @@
 			    <ul id="actions" class="scroll-list">
 			        <li class="action" v-for="(action, index) in signals">
 			            <div>
-			            		<span>{{ action.timestamp.toISOString() }}</span>
+			            	<span>{{ action.timestamp.toISOString() }}</span>
 			                <a data-toggle="collapse" 
-			                    :data-target="'#action-'+index" 
-			                    role="button"
-			                    :class="'bade badge-pill badge-' + actionTypeToBadge(action.action_type)"
-			                >
-			                    {{ action.action_type }}
-			                </a>
+                                v-bind:href="'#action-'+index" 
+                                role="button" aria-expanded="false" 
+                                v-bind:aria-controls="'action-'+index"
+                                :class="'bade badge-pill badge-' + actionTypeToBadge(action.action_type)"
+                            >
+                                {{ action.action_type }}
+                            </a>
 			            </div>
 			            <div v-bind:id="'action-'+index" class="collapse">{{ action.data }}</div>
 			        </li>
