@@ -6,9 +6,9 @@
         "build",
         "--release",
         "--target=wasm32-unknown-unknown",
-        "--target-dir=/home/willem/nix-holochain/main/target"
+        "--target-dir=../target"
       ]
     }
   ],
-  "artifact": "/home/willem/nix-holochain/main/target/wasm32-unknown-unknown/release/main.wasm"
+  "artifact": "../target/wasm32-unknown-unknown/release/main.wasm"
 }
