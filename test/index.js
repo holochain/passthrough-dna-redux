@@ -14,10 +14,20 @@ const config = {
   instances: { app: dna }
 }
 
+var transport_config = {
+    type: 'sim1h',
+    dynamo_url: "http://localhost:8000",
+}
+
+if (process.env.HC_TRANSPORT_CONFIG) {
+    transport_config=require(process.env.HC_TRANSPORT_CONFIG)
+}
+
 const orchestrator = new Orchestrator({
   middleware: tapeExecutor(require('tape')),
   globalConfig: {
     logger: false,
+      network: transport_config
   }
 })
 
