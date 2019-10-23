@@ -16,7 +16,7 @@ const config = {
 
 var transport_config = {
     type: 'sim1h',
-    dynamo_url: "http://localhost:8000",
+    dynamo_url: "http://localhost:8000"
 }
 
 if (process.env.HC_TRANSPORT_CONFIG) {
