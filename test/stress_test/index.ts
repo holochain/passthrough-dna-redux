@@ -47,12 +47,18 @@ const orchestrator = new Orchestrator({
   }
 })
 
-// First two arguments are ts-node and the script name
-const N = parseInt(process.argv[2], 10) || 10
-const M = parseInt(process.argv[3], 10) || 1
+let stress_config = {
+    conductors: 10,
+    instances: 1
+}
 
-console.log(`Running stress tests with N=${N}, M=${M}`)
+// first arg is the path to a config file
+if (process.argv[2]) {
+    stress_config=require(process.argv[2])
+}
 
-require('./all-on')(orchestrator.registerScenario, N, M)
+console.log(`Running stress tests with N=${stress_config.conductors}, M=${stress_config.instances}`)
+
+require('./all-on')(orchestrator.registerScenario, stress_config.conductors, stress_config.instances)
 
 orchestrator.run()
