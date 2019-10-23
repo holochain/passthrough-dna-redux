@@ -14,6 +14,6 @@
     "tape": "^4.9.1"
   },
   "scripts": {
-    "test:stress": "ts-node stress_test/index.ts"
+    "test:stress": "AWS_ACCESS_KEY_ID=bla AWS_SECRET_ACCESS_KEY=blup ts-node stress_test/index.ts"
   }
 }
