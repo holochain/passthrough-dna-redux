@@ -35,10 +35,6 @@ if (process.env.HC_TRANSPORT_CONFIG) {
     network=require(process.env.HC_TRANSPORT_CONFIG)
 }
 
-if (process.env.HC_TRANSPORT_CONFIG) {
-    network=require(process.env.HC_TRANSPORT_CONFIG)
-}
-
 const orchestrator = new Orchestrator({
   middleware,
   globalConfig: {
