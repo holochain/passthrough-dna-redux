@@ -73,6 +73,26 @@ mod my_zome {
                     validation: | _validation_data: hdk::LinkValidationData | {
                         Ok(())
                     }
+                ),
+                to!(
+                    "%agent_id",
+                    link_type: "entry_2_agent",
+                    validation_package: || {
+                        hdk::ValidationPackageDefinition::Entry
+                    },
+                    validation: | _validation_data: hdk::LinkValidationData | {
+                        Ok(())
+                    }
+                ),
+                from!(
+                    "%agent_id",
+                    link_type: "agent_2_entry",
+                    validation_package: || {
+                        hdk::ValidationPackageDefinition::Entry
+                    },
+                    validation: | _validation_data: hdk::LinkValidationData | {
+                        Ok(())
+                    }
                 )
             ]
         )
@@ -121,10 +141,19 @@ mod my_zome {
     }
 
     #[zome_fn("hc_public")]
+    fn link_entries_typed(
+        base: Address,
+        target: Address,
+        link_type: String
+    ) -> ZomeApiResult<Address> {
+        hdk::link_entries(&base, &target, link_type, "".to_string())
+    }
+
+    #[zome_fn("hc_public")]
     fn get_links(
         base: Address, 
     ) -> ZomeApiResult<GetLinksResult> {
-        hdk::get_links(&base, LinkMatch::Exactly(""), LinkMatch::Exactly(""))
+        hdk::get_links(&base, LinkMatch::Any, LinkMatch::Any)
     }
 
     #[zome_fn("hc_public")]
