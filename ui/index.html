@@ -86,6 +86,13 @@
 				<input id="link-base" v-model="linkBase" placeholder="Qm...">
 				<label for="link-target">Target</label>
 				<input id="link-target" v-model="linkTarget" placeholder="Qm...">
+				<label for="link-type">Link Type</label>
+				<select id="link-type" v-model="linkType">
+					<option disabled value="">Please select one</option>
+					<option>''</option>
+					<option>entry_2_agent</option>
+					<option>agent_2_entry</option>
+				</select>
 				<button v-on:click="linkEntries">Link</button>
 			</div>
 
@@ -165,6 +172,7 @@
         messageContent: "",
         linkBase: "",
         linkTarget: "",
+		linkType: "",
         getLinksBase: "",
         updateAddress: "",
         updateContent: "",
@@ -182,7 +190,7 @@
 		      makeCall("send")({to_agent: app.toAgent, payload: app.messageContent})
 		    },
 		    linkEntries: function () {
-		      makeCall("link_entries")({base: app.linkBase, target: app.linkTarget})
+		      makeCall("link_entries_typed")({base: app.linkBase, target: app.linkTarget, link_type: app.linkType})
 		    },      
 		    getLinks: function () {
 		      makeCall("get_links")({base: app.getLinksBase})
