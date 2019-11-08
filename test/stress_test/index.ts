@@ -1,3 +1,6 @@
+import { Config } from '@holochain/try-o-rama'
+import * as R from 'ramda'
+
 const { Orchestrator, tapeExecutor, singleConductor, combine, machinePerPlayer } = require('@holochain/try-o-rama')
 
 process.on('unhandledRejection', error => {
@@ -40,6 +43,7 @@ switch (networkType) {
 
 if (process.env.HC_TRANSPORT_CONFIG) {
     network=require(process.env.HC_TRANSPORT_CONFIG)
+    console.log("setting network from:"+process.env.HC_TRANSPORT_CONFIG)
 }
 
 // default stress test is local (because there are no endpoints specified)
@@ -54,9 +58,26 @@ if (process.argv[2]) {
     stress_config=require(process.argv[2])
 }
 
+
+const dnaLocal = Config.dna('../dist/passthrough-dna.dna.json', 'passthrough')
+const dnaRemote = Config.dna('https://github.com/holochain/passthrough-dna/releases/download/v0.0.6/passthrough-dna.dna.json', 'passthrough')
+let chosenDna = dnaLocal;
+
+/** Builder function for a function that generates a bunch of identical conductor configs
+ with multiple identical instances */
+const makeBatcher = dna => (numConductors, numInstances) => {
+    const conductor = R.pipe(
+        R.map(n => [`${n}`, dna]),
+        R.fromPairs,
+        x => ({ instances: x }),
+    )(R.range(0, numInstances))
+    return R.repeat(conductor, numConductors)
+}
+
 // if there are endpoints specified then we use the machinePerPlayer middleware so try-o-rama
 // knows to connect to trycp on those endpoints for running the tests
 if (stress_config.endpoints) {
+    chosenDna = dnaRemote
     middleware = combine(tapeExecutor(require('tape')), machinePerPlayer(stress_config.endpoints))
 }
 const orchestrator = new Orchestrator({
@@ -67,8 +88,10 @@ const orchestrator = new Orchestrator({
     }
 })
 
+const batcher = makeBatcher(chosenDna)
+
 console.log(`Running stress tests with N=${stress_config.conductors}, M=${stress_config.instances}`)
 
-require('./all-on')(orchestrator.registerScenario, stress_config.conductors, stress_config.instances)
+require('./all-on')(orchestrator.registerScenario, batcher, stress_config.conductors, stress_config.instances)
 
 orchestrator.run()
