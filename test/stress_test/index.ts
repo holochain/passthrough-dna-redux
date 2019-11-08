@@ -54,8 +54,14 @@ let stress_config = {
     endpoints: undefined
 }
 
-// first arg is the path to a stress test config file
+let run_name = ""+Date.now()  // default exam name is just a timestamp
+// first arg is the exam name
 if (process.argv[2]) {
+    run_name=process.argv[2]
+}
+
+// second arg is an optional stress config file
+if (process.argv[3]) {
     stress_config=require(process.argv[2])
 }
 
@@ -93,7 +99,7 @@ const orchestrator = new Orchestrator({
 
 const batcher = makeBatcher(chosenDna)
 
-console.log(`Running stress tests with N=${stress_config.conductors}, M=${stress_config.instances}`)
+console.log(`Running stress test id=${run_name} with N=${stress_config.conductors}, M=${stress_config.instances}`)
 
 require('./all-on')(orchestrator.registerScenario, batcher, stress_config.conductors, stress_config.instances)
 
