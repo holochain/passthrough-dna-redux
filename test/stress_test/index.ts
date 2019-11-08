@@ -1,15 +1,17 @@
 import { Config } from '@holochain/try-o-rama'
 import * as R from 'ramda'
 
-const { Orchestrator, tapeExecutor, singleConductor, combine, machinePerPlayer } = require('@holochain/try-o-rama')
+const { Orchestrator, tapeExecutor, singleConductor, combine, localOnly, machinePerPlayer } = require('@holochain/try-o-rama')
 
 process.on('unhandledRejection', error => {
   console.error('got unhandledRejection:', error);
 });
 
-const networkType = process.env.APP_SPEC_NETWORK_TYPE || 'sim1h'
+const networkType = process.env.APP_SPEC_NETWORK_TYPE || 'sim2h_public'
 let network = null
-let middleware = null
+
+// default middleware is localOnly
+let middleware = combine(tapeExecutor(require('tape')), localOnly)
 
 switch (networkType) {
   case 'memory':
@@ -30,13 +32,12 @@ switch (networkType) {
     }
     middleware = tapeExecutor(require('tape'))
     break
-    case 'remote':
-        network = {
-            type: 'sim2h',
-            sim2h_url: "wss://sim2h.holochain.org:9000",
-        }
-
-        break
+  case 'sim2h_public':
+      network = {
+          type: 'sim2h',
+          sim2h_url: "wss://sim2h.holochain.org:9000",
+      }
+      break
   default:
     throw new Error(`Unsupported network type: ${networkType}`)
 }
@@ -80,6 +81,8 @@ if (stress_config.endpoints) {
     chosenDna = dnaRemote
     middleware = combine(tapeExecutor(require('tape')), machinePerPlayer(stress_config.endpoints))
 }
+console.log("using dna: "+ JSON.stringify(chosenDna))
+console.log("using network: "+ JSON.stringify(network))
 const orchestrator = new Orchestrator({
     middleware,
     globalConfig: {
