@@ -45,7 +45,8 @@ if (process.env.HC_TRANSPORT_CONFIG) {
 // default stress test is local (because there are no endpoints specified)
 let stress_config = {
     conductors: 10,
-    instances: 1
+    instances: 1,
+    endpoints: undefined
 }
 
 // first arg is the path to a stress test config file
