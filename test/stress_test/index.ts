@@ -16,7 +16,7 @@ let middleware = combine(tapeExecutor(require('tape')), localOnly)
 switch (networkType) {
   case 'memory':
     network = 'memory'
-    middleware = combine(singleConductor, tapeExecutor(require('tape')))
+      middleware = combine(tapeExecutor(require('tape')), singleConductor)
     break
   case 'sim1h':
     network = {
