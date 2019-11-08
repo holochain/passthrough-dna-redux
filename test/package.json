@@ -5,7 +5,7 @@
     "typescript": "^3.6.3"
   },
   "dependencies": {
-    "@holochain/try-o-rama": "^0.1.3-beta.5",
+    "@holochain/try-o-rama": "holochain/try-o-rama#trycp",
     "@holochain/fidget-spinner": "0.0.2",
     "ramda": "^0.26.1",
     "faucet": "0.0.1",
