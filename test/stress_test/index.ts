@@ -62,7 +62,7 @@ if (process.argv[2]) {
 
 // second arg is an optional stress config file
 if (process.argv[3]) {
-    stress_config=require(process.argv[2])
+    stress_config=require(process.argv[3])
 }
 
 
@@ -87,6 +87,7 @@ if (stress_config.endpoints) {
     chosenDna = dnaRemote
     middleware = combine(tapeExecutor(require('tape')), machinePerPlayer(stress_config.endpoints))
 }
+
 console.log("using dna: "+ JSON.stringify(chosenDna))
 console.log("using network: "+ JSON.stringify(network))
 const orchestrator = new Orchestrator({
