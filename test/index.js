@@ -1,7 +1,7 @@
 const path = require('path')
 const tape = require('tape')
 
-const { Orchestrator, Config, tapeExecutor } = require('@holochain/try-o-rama')
+const { Orchestrator, Config, tapeExecutor, combine, localOnly } = require('@holochain/try-o-rama')
 
 process.on('unhandledRejection', error => {
   // Will print "unhandledRejection err is not defined"
@@ -24,7 +24,7 @@ if (process.env.HC_TRANSPORT_CONFIG) {
 }
 
 const orchestrator = new Orchestrator({
-  middleware: tapeExecutor(require('tape')),
+  middleware: combine(tapeExecutor(require('tape')), localOnly),
   globalConfig: {
     logger: false,
       network: transport_config
