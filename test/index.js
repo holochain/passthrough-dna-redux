@@ -1,7 +1,7 @@
 const path = require('path')
 const tape = require('tape')
 
-const { Orchestrator, Config, tapeExecutor, combine, localOnly } = require('@holochain/try-o-rama')
+const { Orchestrator, Config, tapeExecutor, combine, localOnly } = require('@holochain/tryorama')
 
 process.on('unhandledRejection', error => {
   // Will print "unhandledRejection err is not defined"
