@@ -49,7 +49,7 @@ module.exports = (scenario, configBatchSimple, N, M) => {
     t.deepEqual(getLinksResults.map(r => r.Ok.links.length), R.repeat(N * M, N * M))
   })
 
-  scenario('all at once', async (s, t) => {
+  scenario.skip('all at once', async (s, t) => {
     const players = R.values(await s.players(configBatchSimple(N, M), true))
     const batch = new Batch(players).iteration('parallel')
 
