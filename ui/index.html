@@ -18,15 +18,33 @@
 		    overflow: scroll;
 		    overflow-x: hidden;
 			}
+			body {
+				background: linear-gradient(45deg, #1a0231f2, #00017f);
+				color: white;
+				padding-top: 40px;
+			}
+
+			.list-group, .list-group-item {
+				color: black;
+			}
+
+			#actions {
+				min-width: 400px;
+			}
+			.action {
+				word-break: break-word;
+			}
 		</style>
 	</head>
 
 	<body>
-		<div id="app">
-			<h3>Testing DNA</h3>
+		<div id="app" class="container">
+			<h1>Passthrough Testing DNA</h1>
 
-			<span>Your agentId is {{ agentId }}</span>
+			<p>Your agentId is <span class="alert alert-success">{{ agentId }}</span> </p>
 
+			<ul class="list-group">
+			<li class="list-group-item">
 			<div style="width: 100%; display: table;">
 			<div style="display: table-row">
 
@@ -63,8 +81,11 @@
 			  </div>
 
 		  </div>
-		 	</div>
+		</div>
+		</ul>
 
+		</li>
+		<li class="list-group-item">
 	    <hr />
 			<h5>Entries</h5>
 			<div>
@@ -86,6 +107,13 @@
 				<input id="link-base" v-model="linkBase" placeholder="Qm...">
 				<label for="link-target">Target</label>
 				<input id="link-target" v-model="linkTarget" placeholder="Qm...">
+				<label for="link-type">Link Type</label>
+				<select id="link-type" v-model="linkType">
+					<option disabled value="">Please select one</option>
+					<option>''</option>
+					<option>entry_2_agent</option>
+					<option>agent_2_entry</option>
+				</select>
 				<button v-on:click="linkEntries">Link</button>
 			</div>
 
@@ -123,8 +151,8 @@
 				<label for="dm-to">To</label>
 				<input id="dm-to" v-model="toAgent" placeholder="HcS...">
 				<button v-on:click="sendMessage">Send</button>
-			</div>			
-
+			</div>
+		</li>
     </div>
 	</body>
 
@@ -165,6 +193,7 @@
         messageContent: "",
         linkBase: "",
         linkTarget: "",
+		linkType: "",
         getLinksBase: "",
         updateAddress: "",
         updateContent: "",
@@ -182,7 +211,7 @@
 		      makeCall("send")({to_agent: app.toAgent, payload: app.messageContent})
 		    },
 		    linkEntries: function () {
-		      makeCall("link_entries")({base: app.linkBase, target: app.linkTarget})
+		      makeCall("link_entries_typed")({base: app.linkBase, target: app.linkTarget, link_type: app.linkType})
 		    },      
 		    getLinks: function () {
 		      makeCall("get_links")({base: app.getLinksBase})

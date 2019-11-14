@@ -1,3 +1,7 @@
 dist
 test
 README.md
+default.nix
+holoscape-bundle.toml
+Vagrantfile
+conductor-config.toml
