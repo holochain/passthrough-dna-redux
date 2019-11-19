@@ -1,18 +1,12 @@
 const path = require('path')
 const tape = require('tape')
 
-const { Orchestrator, Config, tapeExecutor, combine, localOnly } = require('@holochain/try-o-rama')
+const { Orchestrator, Config, tapeExecutor, combine, localOnly } = require('@holochain/tryorama')
 
 process.on('unhandledRejection', error => {
   // Will print "unhandledRejection err is not defined"
   console.error('got unhandledRejection:', error);
 });
-
-const dnaPath = path.join(__dirname, "../dist/passthrough-dna.dna.json")
-const dna = Config.dna(dnaPath, 'passthrough-dna')
-const config = {
-  instances: { app: dna }
-}
 
 var transport_config = {
     type: 'sim1h',
@@ -23,13 +17,22 @@ if (process.env.HC_TRANSPORT_CONFIG) {
     transport_config=require(process.env.HC_TRANSPORT_CONFIG)
 }
 
-const orchestrator = new Orchestrator({
-  middleware: combine(tapeExecutor(require('tape')), localOnly),
-  globalConfig: {
-    logger: false,
-      network: transport_config
-  }
-})
+const dnaPath = path.join(__dirname, "../dist/passthrough-dna.dna.json")
+const dna = Config.dna(dnaPath, 'passthrough-dna')
+console.log(Config.logger(false))
+const config = Config.gen(
+    {
+        app: dna
+    },
+    // global configuration info
+    {
+        ... Config.logger(false),
+        network: transport_config
+    }
+)
+
+// default middleware is local and tape
+const orchestrator = new Orchestrator()
 
 orchestrator.registerScenario("Can commit an entry then get", async (s, t) => {
   const { alice } = await s.players({ alice: config }, true)

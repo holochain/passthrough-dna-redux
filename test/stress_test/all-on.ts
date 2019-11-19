@@ -1,9 +1,6 @@
-import { Config } from '@holochain/try-o-rama'
+import { Config } from '@holochain/tryorama'
 import * as R from 'ramda'
-import { ScenarioApi } from '@holochain/try-o-rama/lib/api'
-import { Player } from '@holochain/try-o-rama/lib/player'
-import { ConductorConfig } from '@holochain/try-o-rama/lib/types'
-import { Batch } from '@holochain/fidget-spinner'
+import { Batch } from '@holochain/tryorama-stress-utils'
 
 
 
@@ -12,7 +9,7 @@ const trace = R.tap(x => console.log('{T}', x))
 module.exports = (scenario, configBatchSimple, N, M) => {
 
   scenario('one at a time', async (s, t) => {
-    const players = R.values(await s.players(configBatchSimple(N, M), true))
+    const players = R.sortBy(p => parseInt(p.name, 10), R.values(await s.players(configBatchSimple(N, M), true)))
     const batch = new Batch(players).iteration('series')
 
     // Make every instance of every conductor commit an entry
@@ -52,8 +49,8 @@ module.exports = (scenario, configBatchSimple, N, M) => {
     t.deepEqual(getLinksResults.map(r => r.Ok.links.length), R.repeat(N * M, N * M))
   })
 
-  scenario('all at once', async (s, t) => {
-    const players = R.values(await s.players(configBatchSimple(N, M), true))
+  scenario.skip('all at once', async (s, t) => {
+    const players = R.sortBy(p => parseInt(p.name, 10), R.values(await s.players(configBatchSimple(N, M), true)))
     const batch = new Batch(players).iteration('parallel')
 
     const commitResults = await batch.mapInstances(instance =>

@@ -5,8 +5,8 @@
     "typescript": "^3.6.3"
   },
   "dependencies": {
-    "@holochain/try-o-rama": "holochain/try-o-rama#trycp",
-    "@holochain/fidget-spinner": "0.0.2",
+    "@holochain/tryorama": "^0.2.0-rc.5",
+    "@holochain/tryorama-stress-utils": "0.0.2",
     "ramda": "^0.26.1",
     "faucet": "0.0.1",
     "json3": "*",
