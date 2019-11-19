@@ -1,10 +1,19 @@
 {
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/node": "^12.7.12",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.3"
+  },
   "dependencies": {
-    "@holochain/diorama": "^0.1.2",
+    "@holochain/tryorama": "^0.2.0-rc.5",
+    "@holochain/tryorama-stress-utils": "0.0.2",
+    "ramda": "^0.26.1",
     "faucet": "0.0.1",
     "json3": "*",
     "sleep": "^5.2.3",
     "tape": "^4.9.1"
+  },
+  "scripts": {
+    "test:stress": "AWS_ACCESS_KEY_ID=bla AWS_SECRET_ACCESS_KEY=blup ts-node stress_test/index.ts"
   }
 }
