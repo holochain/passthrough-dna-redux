@@ -99,7 +99,8 @@ const orchestrator = new Orchestrator({
 
 const commonConfig = {
   network,
-  logger: Config.logger(true)
+  logger: Config.logger(true),
+  metric_publisher
 }
 const batcher = makeBatcher(chosenDna, commonConfig)
 
