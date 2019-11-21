@@ -79,11 +79,16 @@ const makeBatcher = (dna, commonConfig) => (numConductors, numInstances) => {
     return R.repeat(conductor, numConductors)
 }
 
+let metric_publisher;
 // if there are endpoints specified then we use the machinePerPlayer middleware so tryorama
 // knows to connect to trycp on those endpoints for running the tests
 if (stress_config.endpoints) {
     chosenDna = dnaRemote
     middleware = compose(tapeExecutor(require('tape')), machinePerPlayer(stress_config.endpoints))
+    let log_stream_name = run_name + "." + networkType
+    metric_publisher = { cloudwatchlogs: { region: 'eu-central-1', log_stream_name: log_stream_name, log_group_name: 'holochain' } }
+} else {
+    metric_publisher = 'logger'
 }
 
 console.log("using dna: "+ JSON.stringify(chosenDna))
