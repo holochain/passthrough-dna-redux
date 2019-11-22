@@ -86,7 +86,7 @@ if (stress_config.endpoints) {
     chosenDna = dnaRemote
     middleware = compose(tapeExecutor(require('tape')), machinePerPlayer(stress_config.endpoints))
     let log_stream_name = "".concat(run_name, ".", networkType)
-    metric_publisher = { type: 'cloudwatchlogs',  region: 'eu-central-1', log_stream_name: log_stream_name, log_group_name: 'holochain' }
+    metric_publisher = { type: 'cloudwatchlogs',  log_stream_name: log_stream_name, log_group_name: 'holochain' }
 } else {
     metric_publisher = 'logger'
 }
