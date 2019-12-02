@@ -49,7 +49,19 @@ if (process.env.HC_TRANSPORT_CONFIG) {
 let stress_config = {
     conductors: 10,
     instances: 1,
-    endpoints: undefined
+    endpoints: undefined,
+    tests: {
+        allOn: {
+            skip: false
+        },
+        telephoneGame: {
+            skip: true
+        },
+        telephoneHammer: {
+            skip: false,
+            count: 10
+        }
+    }
 }
 
 let run_name = ""+Date.now()  // default exam name is just a timestamp
@@ -62,7 +74,6 @@ if (process.argv[2]) {
 if (process.argv[3]) {
     stress_config=require(process.argv[3])
 }
-
 
 const dnaLocal = Config.dna('../dist/passthrough-dna.dna.json', 'passthrough')
 const dnaRemote = Config.dna('https://github.com/holochain/passthrough-dna/releases/download/v0.0.6/passthrough-dna.dna.json', 'passthrough')
@@ -100,6 +111,21 @@ const batcher = makeBatcher(chosenDna, commonConfig)
 
 console.log(`Running stress test id=${run_name} with N=${stress_config.conductors}, M=${stress_config.instances}`)
 
-require('./all-on')(orchestrator.registerScenario, batcher, stress_config.conductors, stress_config.instances)
+if (stress_config.tests["allOn"]  && !stress_config.tests["allOn"].skip) {
+    console.log("running all-on")
+    require('./all-on')(orchestrator.registerScenario, batcher, stress_config.conductors, stress_config.instances)
+}
+
+if (stress_config.tests["telephoneGame"] && !stress_config.tests["telephoneGame"].skip) {
+    console.log("running telephone game")
+    require('./telephone-games')(orchestrator.registerScenario, batcher, stress_config.conductors, stress_config.instances)
+}
+
+if (stress_config.tests["telephoneHammer"]  && !stress_config.tests["telephoneHammer"].skip) {
+    console.log("running telephone hammer")
+    let count = stress_config.tests["telephoneHammer"].count
+    require('./telephone-hammer')(orchestrator.registerScenario, batcher, stress_config.conductors, stress_config.instances, count)
+}
+
 
 orchestrator.run()
