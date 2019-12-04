@@ -33,7 +33,7 @@ module.exports = (scenario, configBatchSimple, N, M, J) => {
             t.ok(links)
             t.equal(links.Ok.links.length, i*J)
         }
-
-        await telephoneGame(s, t, N*M, players, {init, preSpawn, postSpawn, stepCheck})
+        // timeout is 5 base seconds plus 1 second per node, plus 200ms per count
+        await telephoneGame(s, t, N*M, players, {init, preSpawn, postSpawn, stepCheck}, 5000+1000*M*N+200*J)
     })
 }
