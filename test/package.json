@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "@holochain/tryorama": "^0.3.0-rc.3",
-    "@holochain/tryorama-stress-utils": "0.0.2",
+    "@holochain/tryorama-stress-utils": "0.0.3",
     "ramda": "^0.26.1",
     "faucet": "0.0.1",
     "json3": "*",
