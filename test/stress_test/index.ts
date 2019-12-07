@@ -93,7 +93,7 @@ if (stress_config.endpoints) {
     })
 
 } else {
-    metric_publisher = 'logger'
+    metric_publisher = { type: 'logger' }
 }
 
 console.log("using dna: "+ JSON.stringify(chosenDna))
