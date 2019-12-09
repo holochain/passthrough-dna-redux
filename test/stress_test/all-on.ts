@@ -1,7 +1,7 @@
 import { Config } from '@holochain/tryorama'
 import * as R from 'ramda'
 import { Batch } from '@holochain/tryorama-stress-utils'
-
+import { pollFor } from './poll-for'
 
 
 const trace = R.tap(x => console.log('{T}', x))
@@ -43,7 +43,10 @@ module.exports = (scenario, configBatchSimple, N, M) => {
 
     // Make each other instance getLinks on the base hash
 
-    const getLinksResults = await batch.mapInstances(instance => instance.call('main', 'get_links', { base: baseHash }))
+    const getLinksResults = await pollFor(
+      () => batch.mapInstances(instance => instance.call('main', 'get_links', { base: baseHash })),
+      (results) => R.sum(results.map(r => r.Ok.links.length)) >= N * M * N * M
+    )
 
     // All getLinks results contain the full set
     t.deepEqual(getLinksResults.map(r => r.Ok.links.length), R.repeat(N * M, N * M))
