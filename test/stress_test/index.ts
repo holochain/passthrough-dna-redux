@@ -83,7 +83,7 @@ const makeBatcher = (dna, commonConfig) => (numConductors, numInstances) => {
 // knows to connect to trycp on those endpoints for running the tests
 if (stress_config.endpoints) {
     chosenDna = dnaRemote
-    middleware = compose(tapeExecutor(require('tape')), machinePerPlayer(stress_config.endpoints))
+    middleware = compose(tapeExecutor(require('tape')), machinePerPlayer(stress_config.endpoints, stress_config.conductors))
 }
 
 console.log("using dna: "+ JSON.stringify(chosenDna))
@@ -98,8 +98,8 @@ const commonConfig = {
 }
 const batcher = makeBatcher(chosenDna, commonConfig)
 
-console.log(`Running stress test id=${run_name} with N=${stress_config.conductors}, M=${stress_config.instances}`)
+console.log(`Running stress test id=${run_name} with Nodes=${stress_config.nodes} Conductors=${stress_config.conductors}, Instances=${stress_config.instances}`)
 
-require('./all-on')(orchestrator.registerScenario, batcher, stress_config.conductors, stress_config.instances)
+require('./all-on')(orchestrator.registerScenario, batcher, stress_config.nodes, stress_config.conductors, stress_config.instances)
 
 orchestrator.run()

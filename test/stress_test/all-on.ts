@@ -6,10 +6,11 @@ import { Batch } from '@holochain/tryorama-stress-utils'
 
 const trace = R.tap(x => console.log('{T}', x))
 
-module.exports = (scenario, configBatchSimple, N, M) => {
-
+module.exports = (scenario, configBatchSimple, N, C, I) => {
+  const totalInstances = N*C*I
+  const totalConductors = N*C
   scenario('one at a time', async (s, t) => {
-    const players = R.sortBy(p => parseInt(p.name, 10), R.values(await s.players(configBatchSimple(N, M), true)))
+    const players = R.sortBy(p => parseInt(p.name, 10), R.values(await s.players(configBatchSimple(totalConductors, I), true)))
     const batch = new Batch(players).iteration('series')
 
     // Make every instance of every conductor commit an entry
@@ -20,7 +21,7 @@ module.exports = (scenario, configBatchSimple, N, M) => {
     const hashes = commitResults.map(x => x.Ok)
 
     // All results are Ok (not Err)
-    t.deepEqual(commitResults.map(x => x.Err), R.repeat(undefined, N * M))
+    t.deepEqual(commitResults.map(x => x.Err), R.repeat(undefined, totalInstances))
     t.ok(hashes.every(R.identity))
 
     await s.consistency()
@@ -38,19 +39,19 @@ module.exports = (scenario, configBatchSimple, N, M) => {
     await s.consistency()
 
     t.ok(addLinkResults.every(r => r.Ok))
-    t.equal(addLinkResults.length, N * M)
-    t.deepEqual(addLinkResults.map(x => x.Err), R.repeat(undefined, N * M))
+    t.equal(addLinkResults.length, totalInstances)
+    t.deepEqual(addLinkResults.map(x => x.Err), R.repeat(undefined, totalInstances))
 
     // Make each other instance getLinks on the base hash
 
     const getLinksResults = await batch.mapInstances(instance => instance.call('main', 'get_links', { base: baseHash }))
 
     // All getLinks results contain the full set
-    t.deepEqual(getLinksResults.map(r => r.Ok.links.length), R.repeat(N * M, N * M))
+      t.deepEqual(getLinksResults.map(r => r.Ok.links.length), R.repeat(totalInstances, totalInstances))
   })
 
   scenario.skip('all at once', async (s, t) => {
-    const players = R.sortBy(p => parseInt(p.name, 10), R.values(await s.players(configBatchSimple(N, M), true)))
+    const players = R.sortBy(p => parseInt(p.name, 10), R.values(await s.players(configBatchSimple(totalConductors, I), true)))
     const batch = new Batch(players).iteration('parallel')
 
     const commitResults = await batch.mapInstances(instance =>
@@ -59,7 +60,7 @@ module.exports = (scenario, configBatchSimple, N, M) => {
     const hashes = commitResults.map(x => x.Ok)
 
     // All results are Ok (not Err)
-    t.deepEqual(commitResults.map(x => x.Err), R.repeat(undefined, N * M))
+    t.deepEqual(commitResults.map(x => x.Err), R.repeat(undefined, totalInstances))
     t.ok(hashes.every(R.identity))
 
     await s.consistency()
@@ -71,14 +72,14 @@ module.exports = (scenario, configBatchSimple, N, M) => {
     )
 
     t.ok(addLinkResults.every(r => r.Ok))
-    t.equal(addLinkResults.length, N * M)
-    t.deepEqual(addLinkResults.map(x => x.Err), R.repeat(undefined, N * M))
+    t.equal(addLinkResults.length, totalInstances)
+    t.deepEqual(addLinkResults.map(x => x.Err), R.repeat(undefined, totalInstances))
 
     await s.consistency()
 
     const getLinksResults = await batch.mapInstances(instance => instance.call('main', 'get_links', { base: baseHash }))
 
     // All getLinks results contain the full set
-    t.deepEqual(getLinksResults.map(r => r.Ok.links.length), R.repeat(N * M, N * M))
+    t.deepEqual(getLinksResults.map(r => r.Ok.links.length), R.repeat(totalInstances, totalInstances))
   })
 }
