@@ -76,7 +76,9 @@ const makeBatcher = (dna, commonConfig) => (numConductors, numInstances) => {
         R.map(n => [`${n}`, dna]),
         R.fromPairs,
         instances => Config.gen(instances, commonConfig),
-    )(R.range(0, numInstances))
+        R.groupBy(x => String(x%numConductors)),
+        R.values
+    )(R.range(0, numInstances*numConductors))
     return R.repeat(conductor, numConductors)
 }
 

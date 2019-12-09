@@ -9,8 +9,13 @@ const trace = R.tap(x => console.log('{T}', x))
 module.exports = (scenario, configBatchSimple, N, C, I) => {
   const totalInstances = N*C*I
   const totalConductors = N*C
-  scenario('one at a time', async (s, t) => {
-    const players = R.sortBy(p => parseInt(p.name, 10), R.values(await s.players(configBatchSimple(totalConductors, I), true)))
+    scenario('one at a time', async (s, t) => {
+        let  p =   await s.players(configBatchSimple(totalConductors, I), true)
+        console.log("++++++++++++++++++ p length",p)
+      const players = R.sortBy(p => parseInt(p.name, 10), R.values(p))
+
+        console.log("++++++++++++++++++ Players length",players.length)
+
     const batch = new Batch(players).iteration('series')
 
     // Make every instance of every conductor commit an entry
