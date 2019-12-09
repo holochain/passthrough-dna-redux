@@ -1,7 +1,7 @@
 import { Config } from '@holochain/tryorama'
 import * as R from 'ramda'
 
-const { Orchestrator, tapeExecutor, singleConductor, compose, localOnly, machinePerPlayer } = require('@holochain/tryorama')
+const { Orchestrator, tapeExecutor, singleConductor, compose, localOnly, groupByMachine } = require('@holochain/tryorama')
 
 process.on('unhandledRejection', error => {
   console.error('got unhandledRejection:', error);
@@ -84,7 +84,7 @@ const makeBatcher = (dna, commonConfig) => (numConductors, numInstances) => {
 // knows to connect to trycp on those endpoints for running the tests
 if (stress_config.endpoints) {
     chosenDna = dnaRemote
-    middleware = compose(tapeExecutor(require('tape')), machinePerPlayer(stress_config.endpoints, stress_config.conductors))
+    middleware = compose(tapeExecutor(require('tape')), groupByMachine(stress_config.endpoints, stress_config.conductors))
 }
 
 console.log("using dna: "+ JSON.stringify(chosenDna))
