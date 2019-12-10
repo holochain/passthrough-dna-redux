@@ -102,20 +102,28 @@ const batcher = (numConductors, instancesPerConductor) => configBatchSimple(
 
 console.log(`Running stress test id=${runName} with Nodes=${stressConfig.nodes} Conductors=${stressConfig.conductors}, Instances=${stressConfig.instances}`)
 
-if (stress_config.tests["allOn"]  && !stress_config.tests["allOn"].skip) {
+if (stressConfig.tests == undefined) {
+  stressConfig.tests = {
+    allOn: {
+      skip: false
+    }
+  }
+}
+
+if (stressConfig.tests["allOn"]  && !stressConfig.tests["allOn"].skip) {
   console.log("running all-on")
   require('./all-on')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances)
 }
 
-if (stress_config.tests["telephoneGame"] && !stress_config.tests["telephoneGame"].skip) {
+if (stressConfig.tests["telephoneGame"] && !stressConfig.tests["telephoneGame"].skip) {
   console.log("running telephone game")
-  require('./telephone-games')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stress_config.instances)
+  require('./telephone-games')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances)
 }
 
-if (stress_config.tests["telephoneHammer"]  && !stress_config.tests["telephoneHammer"].skip) {
+if (stressConfig.tests["telephoneHammer"]  && !stressConfig.tests["telephoneHammer"].skip) {
   console.log("running telephone hammer")
-  let count = stress_config.tests["telephoneHammer"].count
-  require('./telephone-hammer')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stress_config.instances, count)
+  let count = stressConfig.tests["telephoneHammer"].count
+  require('./telephone-hammer')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances, count)
 }
 
 orchestrator.run()
