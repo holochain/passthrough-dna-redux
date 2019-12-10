@@ -1,7 +1,8 @@
 import { Config } from '@holochain/tryorama'
 import * as R from 'ramda'
+import { configBatchSimple } from '@holochain/tryorama-stress-utils';
 
-const { Orchestrator, tapeExecutor, singleConductor, compose, localOnly, groupByMachine } = require('@holochain/tryorama')
+import { Orchestrator, tapeExecutor, singleConductor, compose, localOnly, groupPlayersByMachine } from '@holochain/tryorama'
 
 process.on('unhandledRejection', error => {
   console.error('got unhandledRejection:', error);
@@ -46,47 +47,27 @@ if (process.env.HC_TRANSPORT_CONFIG) {
 }
 
 // default stress test is local (because there are no endpoints specified)
-let stress_config = {
-    nodes: 10,
-    conductors: 1,
-    instances: 1,
-    endpoints: undefined
+const defaultStressConfig = {
+  nodes: 4,
+  conductors: 2,
+  instances: 2,
+  endpoints: undefined
 }
 
-let run_name = ""+Date.now()  // default exam name is just a timestamp
-// first arg is the exam name
-if (process.argv[2]) {
-    run_name=process.argv[2]
-}
+const runName = process.argv[2] || ""+Date.now()  // default exam name is just a timestamp
 
 // second arg is an optional stress config file
-if (process.argv[3]) {
-    stress_config=require(process.argv[3])
-}
-
+const stressConfig = process.argv[3] ? require(process.argv[3]) : defaultStressConfig
 
 const dnaLocal = Config.dna('../dist/passthrough-dna.dna.json', 'passthrough')
 const dnaRemote = Config.dna('https://github.com/holochain/passthrough-dna/releases/download/v0.0.6/passthrough-dna.dna.json', 'passthrough')
 let chosenDna = dnaLocal;
 
-/** Builder function for a function that generates a bunch of identical conductor configs
- with multiple identical instances */
-const makeBatcher = (dna, commonConfig) => (numConductors, numInstances) => {
-    const conductor = R.pipe(
-        R.map(n => [`${n}`, dna]),
-        R.fromPairs,
-        instances => Config.gen(instances, commonConfig),
-        R.groupBy(x => String(x%numConductors)),
-        R.values
-    )(R.range(0, numInstances*numConductors))
-    return R.repeat(conductor, numConductors)
-}
-
 // if there are endpoints specified then we use the machinePerPlayer middleware so tryorama
 // knows to connect to trycp on those endpoints for running the tests
-if (stress_config.endpoints) {
+if (stressConfig.endpoints) {
     chosenDna = dnaRemote
-    middleware = compose(tapeExecutor(require('tape')), groupByMachine(stress_config.endpoints, stress_config.conductors))
+    middleware = compose(tapeExecutor(require('tape')), groupPlayersByMachine(stressConfig.endpoints, stressConfig.conductors))
 }
 
 console.log("using dna: "+ JSON.stringify(chosenDna))
@@ -99,10 +80,16 @@ const commonConfig = {
   network,
   logger: Config.logger(true)
 }
-const batcher = makeBatcher(chosenDna, commonConfig)
 
-console.log(`Running stress test id=${run_name} with Nodes=${stress_config.nodes} Conductors=${stress_config.conductors}, Instances=${stress_config.instances}`)
+const batcher = (numConductors, instancesPerConductor) => configBatchSimple(
+  numConductors,
+  instancesPerConductor,
+  chosenDna,
+  commonConfig
+)
 
-require('./all-on')(orchestrator.registerScenario, batcher, stress_config.nodes, stress_config.conductors, stress_config.instances)
+console.log(`Running stress test id=${runName} with Nodes=${stressConfig.nodes} Conductors=${stressConfig.conductors}, Instances=${stressConfig.instances}`)
+
+require('./all-on')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances)
 
 orchestrator.run()

@@ -6,11 +6,13 @@ import { Batch } from '@holochain/tryorama-stress-utils'
 
 const trace = R.tap(x => console.log('{T}', x))
 
-module.exports = (scenario, configBatchSimple, N, C, I) => {
+module.exports = (scenario, configBatch, N, C, I) => {
   const totalInstances = N*C*I
   const totalConductors = N*C
     scenario('one at a time', async (s, t) => {
-        let  p =   await s.players(configBatchSimple(totalConductors, I), true)
+      const configs = configBatch(totalConductors, I)
+      console.log('++++++++++++ configs', configs)
+        let  p =   await s.players(configs, true)
         console.log("++++++++++++++++++ p length",p)
       const players = R.sortBy(p => parseInt(p.name, 10), R.values(p))
 
@@ -56,7 +58,7 @@ module.exports = (scenario, configBatchSimple, N, C, I) => {
   })
 
   scenario.skip('all at once', async (s, t) => {
-    const players = R.sortBy(p => parseInt(p.name, 10), R.values(await s.players(configBatchSimple(totalConductors, I), true)))
+    const players = R.sortBy(p => parseInt(p.name, 10), R.values(await s.players(configBatch(totalConductors, I), true)))
     const batch = new Batch(players).iteration('parallel')
 
     const commitResults = await batch.mapInstances(instance =>
