@@ -48,10 +48,22 @@ if (process.env.HC_TRANSPORT_CONFIG) {
 
 // default stress test is local (because there are no endpoints specified)
 const defaultStressConfig = {
-  nodes: 4,
-  conductors: 2,
-  instances: 2,
-  endpoints: undefined
+  nodes: 1,
+    conductors: 10,
+    instances: 1,
+    endpoints: undefined,
+    tests: {
+        allOn: {
+            skip: false
+        },
+        telephoneGame: {
+            skip: true
+        },
+        telephoneHammer: {
+            skip: true,
+            count: 10
+        }
+    }
 }
 
 const runName = process.argv[2] || ""+Date.now()  // default exam name is just a timestamp
@@ -90,6 +102,20 @@ const batcher = (numConductors, instancesPerConductor) => configBatchSimple(
 
 console.log(`Running stress test id=${runName} with Nodes=${stressConfig.nodes} Conductors=${stressConfig.conductors}, Instances=${stressConfig.instances}`)
 
-require('./all-on')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances)
+if (stress_config.tests["allOn"]  && !stress_config.tests["allOn"].skip) {
+  console.log("running all-on")
+  require('./all-on')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances)
+}
+
+if (stress_config.tests["telephoneGame"] && !stress_config.tests["telephoneGame"].skip) {
+  console.log("running telephone game")
+  require('./telephone-games')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stress_config.instances)
+}
+
+if (stress_config.tests["telephoneHammer"]  && !stress_config.tests["telephoneHammer"].skip) {
+  console.log("running telephone hammer")
+  let count = stress_config.tests["telephoneHammer"].count
+  require('./telephone-hammer')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stress_config.instances, count)
+}
 
 orchestrator.run()
