@@ -28,7 +28,7 @@ module.exports = (scenario, configBatch, N, C, I) => {
     await s.consistency()
 
     // Make one instance commit an entry as a base and link every previously committed entry as a target
-    const instance1 = await players[0]._instances["instance-0"]
+    const instance1 = await players[0]._instances["0"]
     console.log("INSTANCE 1",instance1)
     const baseHash = await instance1.call('main', 'commit_entry', { content: 'base' }).then(r => r.Ok)
     let addLinkResults = []
