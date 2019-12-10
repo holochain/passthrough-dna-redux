@@ -11,18 +11,12 @@ module.exports = (scenario, configBatch, N, C, I) => {
   const totalConductors = N*C
     scenario('one at a time', async (s, t) => {
       const configs = configBatch(totalConductors, I)
-      console.log('++++++++++++ configs', configs)
-        let  p =   await s.players(configs, true)
-        console.log("++++++++++++++++++ p length",p)
+      let  p =   await s.players(configs, true)
       const players = R.sortBy(p => parseInt(p.name, 10), R.values(p))
-
-        console.log("++++++++++++++++++ Players length",players.length)
-
-    const batch = new Batch(players).iteration('series')
+      const batch = new Batch(players).iteration('series')
 
     // Make every instance of every conductor commit an entry
-
-    const commitResults = await batch.mapInstances(instance =>
+      const commitResults = await batch.mapInstances(instance =>
       instance.call('main', 'commit_entry', { content: trace(`entry-${instance.player.name}-${instance.id}`) })
     )
     const hashes = commitResults.map(x => x.Ok)
@@ -34,8 +28,8 @@ module.exports = (scenario, configBatch, N, C, I) => {
     await s.consistency()
 
     // Make one instance commit an entry as a base and link every previously committed entry as a target
-
-    const instance1 = await players[0]._instances[0]
+    const instance1 = await players[0]._instances["instance-0"]
+    console.log("INSTANCE 1",instance1)
     const baseHash = await instance1.call('main', 'commit_entry', { content: 'base' }).then(r => r.Ok)
     let addLinkResults = []
     for (const hash of hashes) {
