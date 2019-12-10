@@ -88,12 +88,12 @@ if (stress_config.endpoints) {
 
     metric_publisher = ({scenarioName, playerName}) => ({
         type: 'cloudwatchlogs',
-        log_stream_name: "".concat(run_name, ".", networkType, ".", scenarioName, ".", playerName),
+        log_stream_name: "".concat(run_name, ".", networkType, ".", 'passthrough-dna', ".", scenarioName, ".", playerName),
         log_group_name: '/aws/ec2/holochain/performance/'
     })
 
 } else {
-    metric_publisher = 'logger'
+    metric_publisher = { type: 'logger' }
 }
 
 console.log("using dna: "+ JSON.stringify(chosenDna))
