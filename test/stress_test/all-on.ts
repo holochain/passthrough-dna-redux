@@ -45,7 +45,11 @@ module.exports = (scenario, configBatchSimple, N, M) => {
 
     const getLinksResults = await pollFor(
       () => batch.mapInstances(instance => instance.call('main', 'get_links', { base: baseHash })),
-      (results) => R.sum(results.map(r => r.Ok.links.length)) >= N * M * N * M
+      (results) => {
+          let count = R.sum(results.map(r => r.Ok.links.length))
+          console.log("getlinks count on poll:", count)
+          return count >= N * M * N * M
+      }
     )
 
     // All getLinks results contain the full set

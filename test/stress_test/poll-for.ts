@@ -1,4 +1,3 @@
-
 /**
  * Run a function at intervals until some condition is met,
  * capturing the result (or timeout event) in a Promise
@@ -23,6 +22,7 @@ export const pollFor = <A>(
           fulfill(val)
         } else {
           if (t >= timeout) {
+            console.log(`pollFor timed out after ${timeout}ms`)
             reject(`pollFor timed out after ${timeout}ms`)
           } else {
             t += interval
@@ -34,5 +34,3 @@ export const pollFor = <A>(
     run()
   }
 )
-
-
