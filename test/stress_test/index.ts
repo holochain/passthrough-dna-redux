@@ -62,7 +62,10 @@ const defaultStressConfig = {
         telephoneHammer: {
             skip: true,
             count: 10
-        }
+        },
+        directMessage: {
+            skip: false
+        },
     }
 }
 
@@ -135,6 +138,12 @@ if (stressConfig.tests["telephoneHammer"]  && !stressConfig.tests["telephoneHamm
   console.log("running telephone hammer")
   let count = stressConfig.tests["telephoneHammer"].count
   require('./telephone-hammer')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances, count)
+}
+
+if (stressConfig.tests["directMessage"]  && !stressConfig.tests["directMessage"].skip) {
+  console.log("running direct messages")
+  let count = stressConfig.tests["directMessage"].count
+  require('./direct-message')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances, count)
 }
 
 orchestrator.run()
