@@ -82,9 +82,9 @@ if (stressConfig.endpoints) {
     chosenDna = dnaRemote
     middleware = compose(tapeExecutor(require('tape')), groupPlayersByMachine(stressConfig.endpoints, stressConfig.conductors))
 
-    metric_publisher = ({scenarioName, playerName}) => ({
+    metric_publisher = ({scenarioName, playerName, uuid}) => ({
         type: 'cloudwatchlogs',
-        log_stream_name: "".concat(run_name, ".", networkType, ".", 'passthrough-dna', ".", scenarioName, ".", playerName),
+        log_stream_name: "".concat(runName, ".", networkType, ".", 'passthrough-dna', ".", scenarioName, ".", playerName, ".", uuid),
         log_group_name: '/aws/ec2/holochain/performance/'
     })
 
