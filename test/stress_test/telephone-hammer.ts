@@ -3,9 +3,11 @@ import { Config } from '@holochain/tryorama'
 import { Batch } from '@holochain/tryorama-stress-utils'
 import { telephoneGame } from './telephone-common'
 
-module.exports = (scenario, configBatchSimple, N, M, J) => {
+module.exports = (scenario, configBatchSimple, N, C, I, J) => {
+    const totalInstances = N*C*I
+    const totalConductors = N*C
     scenario('telephone hammer: const entry -> entry', async (s, t) => {
-        const players = R.values(await s.players(configBatchSimple(N, M), false))
+        const players = R.values(await s.players(configBatchSimple(totalInstances, I), false))
         const init = (instance) => {
             return instance.call('main', 'commit_entry', { content: 'base' }).then(r => r.Ok)
         }
@@ -34,6 +36,6 @@ module.exports = (scenario, configBatchSimple, N, M, J) => {
             t.equal(links.Ok.links.length, i*J)
         }
         // timeout is 5 base seconds plus 1 second per node, plus 200ms per count
-        await telephoneGame(s, t, N*M, players, {init, preSpawn, postSpawn, stepCheck}, 5000+1000*M*N+200*J)
+        await telephoneGame(s, t, totalInstances, players, {init, preSpawn, postSpawn, stepCheck}, 5000+1000*totalInstances+200*J)
     })
 }

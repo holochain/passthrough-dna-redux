@@ -3,9 +3,11 @@ import { Config } from '@holochain/tryorama'
 import { Batch } from '@holochain/tryorama-stress-utils'
 import { telephoneGame } from './telephone-common'
 
-module.exports = (scenario, configBatchSimple, N, M) => {
+module.exports = (scenario, configBatchSimple, N, C, I) => {
+    const totalInstances = N*C*I
+    const totalConductors = N*C
     scenario('telephone game: const entry -> entry', async (s, t) => {
-        const players = R.values(await s.players(configBatchSimple(N, M), false))
+        const players = R.values(await s.players(configBatchSimple(totalConductors, I), false))
         const init = (instance) => {
             return instance.call('main', 'commit_entry', { content: 'base' }).then(r => r.Ok)
         }
@@ -33,11 +35,11 @@ module.exports = (scenario, configBatchSimple, N, M) => {
         }
 
         // timeout is one additional second per instance
-        await telephoneGame(s, t, N, players, {init, preSpawn, postSpawn, stepCheck},(M*N*1000))
+        await telephoneGame(s, t, totalInstances, players, {init, preSpawn, postSpawn, stepCheck},(totalInstances*1000))
     })
 
     scenario('telephone game: const entry -> agent_id', async (s, t) => {
-        const players = R.values(await s.players(configBatchSimple(N, M), false))
+        const players = R.values(await s.players(configBatchSimple(totalConductors, I), false))
 
         const init = (instance) => {
             return instance.call('main', 'commit_entry', { content: 'base' }).then(r => r.Ok)
@@ -67,11 +69,11 @@ module.exports = (scenario, configBatchSimple, N, M) => {
             t.equal(links.Ok.links.length, i)
         }
 
-        await telephoneGame(s, t, N, players, {init, preSpawn, postSpawn, stepCheck},(M*N*1000))
+        await telephoneGame(s, t, totalInstances, players, {init, preSpawn, postSpawn, stepCheck},(totalInstances*1000))
     })
 
     scenario('telephone game: get all previously seen agent entries', async (s, t) => {
-        const players = R.values(await s.players(configBatchSimple(N, M), false))
+        const players = R.values(await s.players(configBatchSimple(totalConductors, I), false))
 
         const init = () => {
             return []
@@ -90,11 +92,11 @@ module.exports = (scenario, configBatchSimple, N, M) => {
             }
         }
 
-        await telephoneGame(s, t, N, players, {init, preSpawn, postSpawn, stepCheck},(M*N*1000))
+        await telephoneGame(s, t, totalInstances, players, {init, preSpawn, postSpawn, stepCheck},(totalInstances*1000))
     })
 
     scenario('telephone game:  agent_id -> const entry', async (s, t) => {
-        const players = R.values(await s.players(configBatchSimple(N, M), false))
+        const players = R.values(await s.players(configBatchSimple(totalConductors, I), false))
 
         const init = (instance) => {
             return instance.agentAddress
@@ -126,11 +128,12 @@ module.exports = (scenario, configBatchSimple, N, M) => {
             t.equal(links.Ok.links.length, i)
         }
 
-        await telephoneGame(s, t, N, players, {init, preSpawn, postSpawn, stepCheck},(M*N*1000))
+        await telephoneGame(s, t, totalInstances, players, {init, preSpawn, postSpawn, stepCheck},(totalInstances*1000))
     })
 
     scenario('telephone game:  complex initial data', async (s, t) => {
-        const players = R.values(await s.players(configBatchSimple(N, M), false))
+        const players = R.values(await s.players(configBatchSimple(totalConductors, I)
+, false))
 
         const init = async (instance) => {
             console.log("Committing entry")
@@ -190,6 +193,6 @@ module.exports = (scenario, configBatchSimple, N, M) => {
         }
 
         // timeout of 5 base seconds plus 2 seconds per instance
-        await telephoneGame(s, t, N, players, {init, preSpawn, postSpawn, stepCheck}, 5000+(M*N*2000))
+        await telephoneGame(s, t, totalInstances, players, {init, preSpawn, postSpawn, stepCheck}, 5000+(totalInstances*2000))
     })
 }
