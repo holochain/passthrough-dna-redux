@@ -87,7 +87,7 @@ if (stressConfig.endpoints) {
 
     metric_publisher = ({scenarioName, playerName}) => ({
         type: 'cloudwatchlogs',
-        log_stream_name: "".concat(runName, ".", networkType, ".", 'passthrough-dna', ".", scenarioName, ".", playerName, ".", Guid.create()),
+        log_stream_name: "".concat(runName, ".", networkType, ".", 'passthrough-dna', ".", scenarioName, ".", playerName, ".", Guid.create().raw()),
         log_group_name: '/aws/ec2/holochain/performance/'
     })
 
