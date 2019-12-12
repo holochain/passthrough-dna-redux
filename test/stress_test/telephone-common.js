@@ -50,14 +50,6 @@ const telephoneGame = async (s, t, N, players, functions, timeout = 5000) => {
         await s.consistency()
 
         console.log("##################################")
-        console.log("### TIMEOUT START")
-        console.log("##################################")
-        await new Promise((resolve)=>setTimeout(resolve, STEP_TIMEOUT_MS))
-        console.log("##################################")
-        console.log("### TIMEOUT END")
-        console.log("##################################")
-
-        console.log("##################################")
         console.log("### STEP CHECK")
         console.log("##################################")
         await stepCheck(instance2, baseHash, i)
