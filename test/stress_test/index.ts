@@ -54,13 +54,13 @@ const defaultStressConfig = {
     endpoints: undefined,
     tests: {
         allOn: {
-            skip: false
-        },
-        telephoneGame: {
             skip: true
         },
+        telephoneGame: {
+            skip: false
+        },
         telephoneHammer: {
-            skip: true,
+            skip: false,
             count: 10
         }
     }

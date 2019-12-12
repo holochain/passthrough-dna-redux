@@ -1,7 +1,6 @@
 import * as R from 'ramda'
 import { Config } from '@holochain/tryorama'
-import { Batch } from '@holochain/tryorama-stress-utils'
-import { telephoneGame } from './telephone-common'
+import { Batch, telephoneGame } from '@holochain/tryorama-stress-utils'
 
 module.exports = (scenario, configBatchSimple, N, C, I, J) => {
     const totalInstances = N*C*I
@@ -36,6 +35,6 @@ module.exports = (scenario, configBatchSimple, N, C, I, J) => {
             t.equal(links.Ok.links.length, i*J)
         }
         // timeout is 5 base seconds plus 1 second per node, plus 200ms per count
-        await telephoneGame(s, t, totalInstances, players, {init, preSpawn, postSpawn, stepCheck}, 5000+1000*totalInstances+200*J)
+        await telephoneGame(s, t, totalInstances, players, {init, preSpawn, postSpawn, stepCheck})
     })
 }
