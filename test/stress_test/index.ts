@@ -1,7 +1,7 @@
 import { Config } from '@holochain/tryorama'
 import * as R from 'ramda'
 import { configBatchSimple } from '@holochain/tryorama-stress-utils';
-
+import { Guid } from "guid-typescript";
 import { Orchestrator, tapeExecutor, singleConductor, compose, localOnly, groupPlayersByMachine } from '@holochain/tryorama'
 
 process.on('unhandledRejection', error => {
@@ -87,7 +87,7 @@ if (stressConfig.endpoints) {
 
     metric_publisher = ({scenarioName, playerName}) => ({
         type: 'cloudwatchlogs',
-        log_stream_name: "".concat(runName, ".", networkType, ".", 'passthrough-dna', ".", scenarioName, ".", playerName),
+        log_stream_name: "".concat(runName, ".", networkType, ".", 'passthrough-dna', ".", scenarioName, ".", playerName, ".", Guid.create()),
         log_group_name: '/aws/ec2/holochain/performance/'
     })
 

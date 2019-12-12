@@ -11,7 +11,8 @@
     "faucet": "0.0.1",
     "json3": "*",
     "sleep": "^5.2.3",
-    "tape": "^4.9.1"
+    "tape": "^4.9.1",
+    "guid-typescript": "^1.0.9"
   },
   "scripts": {
     "test:stress": "AWS_ACCESS_KEY_ID=bla AWS_SECRET_ACCESS_KEY=blup ts-node stress_test/index.ts"
