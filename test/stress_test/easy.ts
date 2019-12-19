@@ -4,6 +4,7 @@ import { Batch } from '@holochain/tryorama-stress-utils'
 
 
 const trace = R.tap(x => console.log('{T}', x))
+const delay = ms => new Promise(r => setTimeout(r, ms))
 
 module.exports = (scenario, configBatch, N, C, I) => {
     const totalInstances = N*C*I
@@ -12,7 +13,13 @@ module.exports = (scenario, configBatch, N, C, I) => {
     scenario('all agents exists', async (s, t) => {
         const players = R.sortBy(p => parseInt(p.name, 10), R.values(await s.players(configBatch(totalConductors, I), false)))
 
-        await Promise.all(players.map(player => player.spawn()))
+        // range of random number of milliseconds to wait before startup
+        const startupSpacing = 10000
+
+        await Promise.all(players.map(async player => {
+            await delay(Math.random()*startupSpacing)
+            return player.spawn()
+        }))
 
         const batch = new Batch(players).iteration('series')
 
