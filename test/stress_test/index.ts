@@ -60,11 +60,11 @@ const defaultStressConfig = {
             skip: true
         },
         telephoneHammer: {
-            skip: true,
+            skip: false,
             count: 10
         },
         directMessage: {
-            skip: false
+            skip: true
         },
     }
 }
