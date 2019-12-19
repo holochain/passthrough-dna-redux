@@ -15,6 +15,8 @@ module.exports = (scenario, configBatch, N, C, I) => {
 
         // range of random number of milliseconds to wait before startup
         const startupSpacing = 10000
+        // number of milliseconds to wait between gets
+        const getWait = 100
 
         await Promise.all(players.map(async player => {
             await delay(Math.random()*startupSpacing)
@@ -30,6 +32,7 @@ module.exports = (scenario, configBatch, N, C, I) => {
         await batch.mapInstances(async instance => {
             for (const id of agentIds) {
                 if (instance.agentAddress != id) {
+                    await delay(getWait)
                     const result = await instance.call('main', 'get_entry', {address: instance.agentAddress})
                     results.push( Boolean(result.Ok) )
                 }
