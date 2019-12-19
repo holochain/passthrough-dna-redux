@@ -39,15 +39,16 @@ module.exports = (scenario, configBatchSimple, N, C, I, initialLinks) => {
 
 const telephoneHammer = async (s, t, players, totalInstances, linksPerRound) => {
 
+    const baseContent = 'base-' + linksPerRound
     const init = (instance) => {
-        return instance.call('main', 'commit_entry', { content: 'base' }).then(r => r.Ok)
+        return instance.call('main', 'commit_entry', { content: baseContent}).then(r => r.Ok)
     }
 
     const preSpawn = () => {}
 
     const postSpawn = async (instance, baseHash, i) => {
         console.log("Committing entry")
-        const entryHash = await instance.call('main', 'commit_entry', { content: 'player' + (i-1) }).then(r => r.Ok)
+        const entryHash = await instance.call('main', 'commit_entry', { content: 'player' + (i-1)}).then(r => r.Ok)
         console.log(`Committing ${linksPerRound} links`)
         for(let j=0; j < linksPerRound; j++) {
             const link_result = await instance.call('main', 'link_entries', { base: baseHash, target: entryHash })
@@ -60,7 +61,7 @@ const telephoneHammer = async (s, t, players, totalInstances, linksPerRound) => 
         console.log(`Trying to get base from node ${i}`)
         const base = await instance.call('main', 'get_entry', {address: baseHash})
         t.ok(base)
-        t.deepEqual(base.Ok, { App: [ 'generic_entry', 'base' ] })
+        t.deepEqual(base.Ok, { App: [ 'generic_entry', baseContent ] })
         console.log("Trying to get all previous links on new node")
         const links = await instance.call('main', 'get_links', { base: baseHash })
         t.ok(links)
