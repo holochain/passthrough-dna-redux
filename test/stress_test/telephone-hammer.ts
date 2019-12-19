@@ -14,6 +14,9 @@ module.exports = (scenario, configBatchSimple, N, C, I, initialLinks) => {
 
         const stage = async (players, {numLinks}) => {
             await telephoneHammer(s, t, players, totalInstances, numLinks)
+            if (!t._ok) {
+                throw new Error("Encountered tape failure. Check the test results.")
+            }
             return players
         }
 
