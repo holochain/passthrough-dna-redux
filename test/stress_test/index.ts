@@ -49,8 +49,8 @@ if (process.env.HC_TRANSPORT_CONFIG) {
 // default stress test is local (because there are no endpoints specified)
 const defaultStressConfig = {
     nodes: 1,
-    conductors: 10,
-    instances: 1,
+    conductors: 5,
+    instances: 8,
     endpoints: undefined,
     tests: {
         allOn: {
@@ -67,7 +67,8 @@ const defaultStressConfig = {
             skip: true
         },
         easy: {
-            skip: false
+            skip: false,
+            spinUpDelay: 0,
         }
     }
 }
