@@ -10,7 +10,7 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize) => {
     const totalInstances = N*C*I
     const totalConductors = N*C
 
-    if (!sampleSize) {
+    if (sampleSize === undefined) {
         sampleSize = 1
     }
 

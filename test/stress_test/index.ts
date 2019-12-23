@@ -117,7 +117,7 @@ const batcher = (numConductors, instancesPerConductor) => configBatchSimple(
   commonConfig
 )
 
-console.log(`Running stress test id=${runName} with Nodes=${stressConfig.nodes} Conductors=${stressConfig.conductors}, Instances=${stressConfig.instances}`)
+console.log(`Running stress test id=${runName} with Config: \n`, stressConfig)
 
 if (stressConfig.tests == undefined) {
   stressConfig.tests = {
@@ -134,7 +134,7 @@ if (stressConfig.tests["allOn"]  && !stressConfig.tests["allOn"].skip) {
 
 if (stressConfig.tests["easy"]  && !stressConfig.tests["easy"].skip) {
     console.log("running easy")
-    require('./easy')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances, stressConfig.sampleSize)
+    require('./easy')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances, stressConfig.tests["easy"].sampleSize)
 }
 
 if (stressConfig.tests["telephoneGame"] && !stressConfig.tests["telephoneGame"].skip) {
