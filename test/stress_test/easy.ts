@@ -6,7 +6,7 @@ import { Batch } from '@holochain/tryorama-stress-utils'
 const trace = R.tap(x => console.log('{T}', x))
 const delay = ms => new Promise(r => setTimeout(r, ms))
 
-module.exports = (scenario, configBatch, N, C, I, sampleSize) => {
+module.exports = (scenario, configBatch, N, C, I, sampleSize, spinUpDelay) => {
     const totalInstances = N*C*I
     const totalConductors = N*C
 
@@ -28,11 +28,13 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize) => {
         }))
         console.log("============================================\nall nodes have started\n============================================")
         console.log(`beginning test with sample size: ${sampleSize}`)
-        await delay(45000)
+        if spinUpDelay == 0 {
+            await s.consistency()
+        } else {
+            await delay(spinUpDelay)
+        }
 
         const batch = new Batch(players).iteration('parallel')
-
-//        await s.consistency()
 
         const agentIds = await batch.mapInstances(async instance => instance.agentAddress)
         let results = []

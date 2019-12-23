@@ -134,7 +134,7 @@ if (stressConfig.tests["allOn"]  && !stressConfig.tests["allOn"].skip) {
 
 if (stressConfig.tests["easy"]  && !stressConfig.tests["easy"].skip) {
     console.log("running easy")
-    require('./easy')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances, stressConfig.tests["easy"].sampleSize)
+    require('./easy')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances, stressConfig.tests["easy"].sampleSize, stressConfig.tests["easy"].spinUpDelay)
 }
 
 if (stressConfig.tests["telephoneGame"] && !stressConfig.tests["telephoneGame"].skip) {
