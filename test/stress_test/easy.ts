@@ -29,8 +29,10 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize, spinUpDelay) => {
         console.log("============================================\nall nodes have started\n============================================")
         console.log(`beginning test with sample size: ${sampleSize}`)
         if (spinUpDelay == 0) {
+            console.log("waiting for consistency")
             await s.consistency()
         } else {
+            console.log(`spin up delay ${spinUpDelay}`)
             await delay(spinUpDelay)
         }
 
