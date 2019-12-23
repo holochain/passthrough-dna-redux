@@ -23,7 +23,7 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize) => {
         // const getWait = 100
 
         await Promise.all(players.map(async player => {
-            await delay(Math.random()*startupSpacing)
+            //await delay(Math.random()*startupSpacing)
             return player.spawn()
         }))
         console.log("============================================\nall nodes have started\n============================================")
