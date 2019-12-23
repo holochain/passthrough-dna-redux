@@ -45,7 +45,7 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize) => {
                 for (const id of agentIds) {
                     if (instance.agentAddress != id) {
                         // await delay(getWait)
-                        const result = await instance.call('main', 'get_entry', {address: instance.agentAddress})
+                        const result = await instance.call('main', 'get_entry', {address: id})
                         results.push( Boolean(result.Ok) )
                     }
                 }
