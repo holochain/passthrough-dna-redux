@@ -48,13 +48,13 @@ if (process.env.HC_TRANSPORT_CONFIG) {
 
 // default stress test is local (because there are no endpoints specified)
 const defaultStressConfig = {
-  nodes: 1,
-    conductors: 10,
-    instances: 1,
+    nodes: 1,
+    conductors: 5,
+    instances: 8,
     endpoints: undefined,
     tests: {
         allOn: {
-            skip: false
+            skip: true
         },
         telephoneGame: {
             skip: true
@@ -64,8 +64,12 @@ const defaultStressConfig = {
             count: 10
         },
         directMessage: {
-            skip: false
+            skip: true
         },
+        easy: {
+            skip: false,
+            spinUpDelay: 0,
+        }
     }
 }
 
@@ -114,7 +118,7 @@ const batcher = (numConductors, instancesPerConductor) => configBatchSimple(
   commonConfig
 )
 
-console.log(`Running stress test id=${runName} with Nodes=${stressConfig.nodes} Conductors=${stressConfig.conductors}, Instances=${stressConfig.instances}`)
+console.log(`Running stress test id=${runName} with Config: \n`, stressConfig)
 
 if (stressConfig.tests == undefined) {
   stressConfig.tests = {
@@ -127,6 +131,11 @@ if (stressConfig.tests == undefined) {
 if (stressConfig.tests["allOn"]  && !stressConfig.tests["allOn"].skip) {
   console.log("running all-on")
   require('./all-on')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances)
+}
+
+if (stressConfig.tests["easy"]  && !stressConfig.tests["easy"].skip) {
+    console.log("running easy")
+    require('./easy')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances, stressConfig.tests["easy"].sampleSize, stressConfig.tests["easy"].spinUpDelay)
 }
 
 if (stressConfig.tests["telephoneGame"] && !stressConfig.tests["telephoneGame"].skip) {

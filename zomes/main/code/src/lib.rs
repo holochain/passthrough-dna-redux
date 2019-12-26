@@ -9,7 +9,7 @@ extern crate serde_derive;
 extern crate serde_json;
 extern crate holochain_json_derive;
 
-use holochain_wasm_utils::api_serialization::get_links::GetLinksResult;
+use holochain_wasm_utils::api_serialization::{get_links::GetLinksResult, get_entry::GetEntryOptions};
 use hdk::{
     entry_definition::ValidatingEntryType,
     error::ZomeApiResult,
@@ -113,12 +113,15 @@ mod my_zome {
 
     #[zome_fn("hc_public")]
     fn get_entry(address: Address) -> ZomeApiResult<Option<Entry>> {
-        hdk::get_entry(&address)
+        let mut options = GetEntryOptions::default();
+        options.timeout = Timeout::new(2000);
+        Ok(hdk::get_entry_result(&address, options)?.latest())
+//        hdk::get_entry(&address)
     }
 
     #[zome_fn("hc_public")]
     fn update_entry(
-        new_content: String, 
+        new_content: String,
         address: Address
     ) -> ZomeApiResult<Address> {
         hdk::update_entry(
@@ -134,8 +137,8 @@ mod my_zome {
 
     #[zome_fn("hc_public")]
     fn link_entries(
-        base: Address, 
-        target: Address, 
+        base: Address,
+        target: Address,
     ) -> ZomeApiResult<Address> {
         hdk::link_entries(&base, &target, "", "")
     }
@@ -151,15 +154,15 @@ mod my_zome {
 
     #[zome_fn("hc_public")]
     fn get_links(
-        base: Address, 
+        base: Address,
     ) -> ZomeApiResult<GetLinksResult> {
         hdk::get_links(&base, LinkMatch::Any, LinkMatch::Any)
     }
 
     #[zome_fn("hc_public")]
     fn send(
-        to_agent: Address, 
-        payload: String, 
+        to_agent: Address,
+        payload: String,
     ) -> ZomeApiResult<String> {
         hdk::send(to_agent, payload, Timeout::new(5000))
     }

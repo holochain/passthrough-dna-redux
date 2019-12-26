@@ -24,9 +24,23 @@ with holonix.pkgs;
  dev-shell = stdenv.mkDerivation (holonix.shell // {
   name = "dev-shell";
 
-  buildInputs = [ ]
-   ++ holonix.shell.buildInputs
-   ++ config.buildInputs
+  shellHook = holonix.pkgs.lib.concatStrings [
+   holonix.shell.shellHook
+   ''
+   cd test \
+    && ${holonix.pkgs.nodejs-12_x}/bin/npm install \
+    && export PATH="$PATH:$( ${holonix.pkgs.nodejs-12_x}/bin/npm bin )"
+   ''
+  ];
+
+  buildInputs = [
+   holonix.pkgs.nodejs-12_x
+   holonix.pkgs.nodePackages.node-gyp-build
+   holonix.pkgs.python37
+
+  ]
+  ++ holonix.shell.buildInputs
+  ++ config.buildInputs
   ;
  });
 }

@@ -14,7 +14,7 @@
 
    # can be any github ref
    # branch, tag, commit, etc.
-   ref = "v0.0.51";
+   ref = "v0.0.56";
 
    # the sha of what is downloaded from the above ref
    # note: even if you change the above ref it will not be redownloaded until
@@ -93,7 +93,7 @@ See:
    owner = "holochain";
 
    # repository name on github that release are deployed to
-   repo = "holonix";
+   repo = "passthrough-dna";
 
    # canonical local upstream name as per `git remote -v`
    upstream = "origin";
