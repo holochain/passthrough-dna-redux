@@ -7,10 +7,11 @@
   "dependencies": {
     "@holochain/tryorama": "^0.3.0",
     "@holochain/tryorama-stress-utils": "0.0.6",
-    "ramda": "^0.26.1",
     "faucet": "0.0.1",
     "json3": "*",
-    "sleep": "^5.2.3",
+    "node-gyp": "^5.0.7",
+    "ramda": "^0.26.1",
+    "sleep": "^6.1.0",
     "tape": "^4.9.1"
   },
   "scripts": {
