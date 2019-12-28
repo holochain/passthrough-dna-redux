@@ -39,6 +39,9 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize, spinUpDelay) => {
         const batch = new Batch(players).iteration('parallel')
 
         const agentIds = await batch.mapInstances(async instance => instance.agentAddress)
+        const agentSet = new Set(agentIds)
+        console.log('agentIds: ', agentIds.length)
+        console.log('agentSet: ', agentSet.size)
 
         let tries = 0
         let last_results = []
@@ -64,12 +67,15 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize, spinUpDelay) => {
             let expected =  R.repeat(true,checkedCount*(totalInstances-1))
             if (JSON.stringify(expected)==JSON.stringify(results)) {
                 console.log("it worked", expected, results)
-                t.assert(true)
+                t.pass()
+                t.end()
                 break
             } else {
                 if (JSON.stringify(last_results)==JSON.stringify(results)) {
                     console.log("it failed", expected, results)
-                    t.assert(false)
+                    t.fail('it failed')
+                    t.end()
+                    break
                 } else {
                     tries += 1
                     last_results = results
