@@ -54,7 +54,6 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize, spinUpDelay) => {
                     for (const id of agentIds) {
                         if (instance.agentAddress != id) {
                             await delay(getWait)
-                            console.log(`GETTING ENTRY FOR ${id}`)
                             const result = await instance.call('main', 'get_entry', {address: id})
                             results.push( Boolean(result.Ok) )
                         }
