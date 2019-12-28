@@ -50,7 +50,7 @@ if (process.env.HC_TRANSPORT_CONFIG) {
 const defaultStressConfig = {
     nodes: 1,
     conductors: 2,
-    instances: 2,
+    instances: 100,
     endpoints: undefined,
     tests: {
         allOn: {
@@ -79,7 +79,7 @@ const runName = process.argv[2] || ""+Date.now()  // default exam name is just a
 const stressConfig = process.argv[3] ? require(process.argv[3]) : defaultStressConfig
 
 const dnaLocal = Config.dna('../dist/passthrough-dna.dna.json', 'passthrough')
-const dnaRemote = Config.dna('https://github.com/holochain/passthrough-dna/releases/download/v0.0.6/passthrough-dna.dna.json', 'passthrough')
+const dnaRemote = Config.dna('https://github.com/holochain/passthrough-dna/releases/download/v0.0.7-rc1/passthrough-dna.dna.json', 'passthrough')
 let chosenDna = dnaLocal;
 
 let metric_publisher;
