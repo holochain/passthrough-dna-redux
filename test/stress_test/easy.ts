@@ -40,8 +40,8 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize, spinUpDelay) => {
 
         const agentIds = await batch.mapInstances(async instance => instance.agentAddress)
         const agentSet = new Set(agentIds)
-        console.log('agentIds: ', agentIds.length)
-        console.log('agentSet: ', agentSet.size)
+        console.log('agentIds: ', agentIds.length, JSON.stringify(agentIds))
+        console.log('agentSet: ', agentSet.size, JSON.stringify(Array.from(agentSet)))
 
         let tries = 0
         let last_results = []
