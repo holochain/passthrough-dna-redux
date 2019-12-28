@@ -68,13 +68,11 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize, spinUpDelay) => {
             if (JSON.stringify(expected)==JSON.stringify(results)) {
                 console.log("it worked", expected, results)
                 t.pass()
-                t.end()
                 break
             } else {
                 if (JSON.stringify(last_results)==JSON.stringify(results)) {
                     console.log("it failed", expected, results)
                     t.fail('it failed')
-                    t.end()
                     break
                 } else {
                     tries += 1
