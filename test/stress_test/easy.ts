@@ -16,6 +16,7 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize, spinUpDelay) => {
 
     scenario('all agents exists', async (s, t) => {
         const players = R.sortBy(p => parseInt(p.name, 10), R.values(await s.players(configBatch(totalConductors, I), false)))
+        const batch = new Batch(players).iteration('parallel')
 
         // range of random number of milliseconds to wait before startup
         // const startupSpacing = 10000
@@ -35,8 +36,6 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize, spinUpDelay) => {
             console.log(`spin up delay ${spinUpDelay}`)
             await delay(spinUpDelay)
         }
-
-        const batch = new Batch(players).iteration('parallel')
 
         const agentIds = await batch.mapInstances(async instance => instance.agentAddress)
 

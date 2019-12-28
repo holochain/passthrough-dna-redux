@@ -103,11 +103,28 @@ console.log("using dna: "+ JSON.stringify(chosenDna))
 console.log("using network: "+ JSON.stringify(network))
 const orchestrator = new Orchestrator({
     middleware,
+    waiter: {
+      softTimeout: 15000,
+      hardTimeout: 30000,
+
+      // new Waiter setting to use alternate NetworkModel
+      // if none specified, uses fullsync, otherwise an experimental sharding-aware network model
+      networkModel: {
+        type: 'naive-sharding',
+        redundancy: 10,
+      },
+      // networkModel: {
+      //   type: 'fullsync',
+      // },
+    }
 })
+
+const logger = Config.logger(true)
+logger.state_dump = false
 
 const commonConfig = {
   network,
-  logger: Config.logger(true),
+  logger,
   metric_publisher
 }
 
