@@ -5,8 +5,8 @@
     "typescript": "^3.6.3"
   },
   "dependencies": {
-    "@holochain/tryorama": "^0.3.0",
-    "@holochain/tryorama-stress-utils": "0.0.6",
+    "@holochain/tryorama": "^0.3.2-dev.2",
+    "@holochain/tryorama-stress-utils": "0.0.10",
     "ramda": "^0.26.1",
     "faucet": "0.0.1",
     "json3": "*",
@@ -14,6 +14,8 @@
     "tape": "^4.9.1"
   },
   "scripts": {
-    "test:stress": "AWS_ACCESS_KEY_ID=bla AWS_SECRET_ACCESS_KEY=blup ts-node stress_test/index.ts"
+    "build": "tsc",
+    "test:stress": "npm run build && AWS_ACCESS_KEY_ID=bla AWS_SECRET_ACCESS_KEY=blup node stress_test/lib/index.js",
+    "test:debug": "npm run build && APP_SPEC_NETWORK_TYPE=sim2h node --inspect stress_test/lib/index.js"
   }
 }
