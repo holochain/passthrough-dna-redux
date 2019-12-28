@@ -36,11 +36,11 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize, spinUpDelay) => {
             await delay(spinUpDelay)
         }
 
-        const batch = new Batch(players).iteration('parallel')
+        const batch = new Batch(players).iteration('series')
 
-        const agentIds = await batch.mapInstances(async instance => instance.agentAddress)
-        const agentSet = new Set(agentIds)
-        console.log('agentIds: ', agentIds.length, JSON.stringify(agentIds))
+        const agentAddresses = await batch.mapInstances(async instance => instance.agentAddress)
+        const agentSet = new Set(agentAddresses)
+        console.log('agentAddresses: ', agentAddresses.length, JSON.stringify(agentAddresses))
         console.log('agentSet: ', agentSet.size, JSON.stringify(Array.from(agentSet)))
 
         let tries = 0
@@ -50,17 +50,27 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize, spinUpDelay) => {
             let i = 0
             let checkedCount = 0;
             let mod = Math.floor(totalInstances/sampleSize)
-            await batch.mapInstances(async instance => {
+            await batch.mapInstances(async sampledInstance => {
                 if  ( i % mod == 0) {
                     checkedCount += 1
-                    console.log(`\n-------------------------------------------\ngetting ${totalInstances} entries for ${i} (${instance.agentAddress})\n---------------------------\n`)
-                    for (const id of agentIds) {
-                        if (instance.agentAddress != id) {
+                    console.log(`\n-------------------------------------------\ngetting ${totalInstances} entries for ${i} (${sampledInstance.agentAddress})\n---------------------------\n`)
+                    await batch.mapInstances(async subInstance => {
+                        if (sampledInstance.agentAddress != subInstance.agentAddress) {
+                            const address = subInstance.agentAddress
                             await delay(getWait)
-                            const result = await instance.call('main', 'get_entry', {address: id})
-                            results.push( Boolean(result.Ok) )
+                            const diagnosticsPromise = dumpDiagnostics(batch, address)
+                            const resultPromise = sampledInstance.call('main', 'get_entry', { address })
+                            const [diagnostics, result] = await Promise.all([diagnosticsPromise, resultPromise])
+                            const resultBool = Boolean(result.Ok)
+                            console.log(`:::::::::::::: DUMP DIAGNOSTICS ::::::::::::::::`)
+                            console.log(`getting entry ${address}`)
+                            console.log(`from agent ${sampledInstance.agentAddress}`)
+                            console.log(`result = ${resultBool}`)
+                            console.log(displayDumpDiagnostics(diagnostics, address))
+
+                            results.push(resultBool)
                         }
-                    }
+                    })
                 }
                 i+=1
             })
@@ -82,4 +92,24 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize, spinUpDelay) => {
             }
         }
     })
+}
+
+const dumpDiagnostics = async (batch: Batch, address: string) => {
+    return batch.mapInstances(async instance => {
+        const dump = await instance.stateDump()
+        const heldHashes = R.keys(dump.held_aspects).filter(hash => hash.startsWith('Hc'))
+        const holding = heldHashes.includes(address)
+        return [instance.agentAddress, holding, heldHashes.length]
+    })
+}
+
+const displayDumpDiagnostics = (diagnostics, address) => {
+    console.log('------------------------------------------------------------------------')
+    console.log('target address: ', address)
+    console.log('format:')
+    console.log('[agent ID for state dump] : [is holding target] ([num agent entries held])')
+    console.log('------------------------------------------------------------------------')
+    for (const [address, holding, numHeld] of diagnostics) {
+        console.log(`${address} : ${holding ? '✅ YES' : '❌ NO '}  (${numHeld})`)
+    }
 }
