@@ -28,7 +28,7 @@ switch (networkType) {
   case 'sim2h':
     network = {
       type: 'sim2h',
-      sim2h_url: "wss://localhost:9002",
+      sim2h_url: "ws://localhost:9002",
     }
     break
   case 'sim2h_public':
@@ -49,8 +49,8 @@ if (process.env.HC_TRANSPORT_CONFIG) {
 // default stress test is local (because there are no endpoints specified)
 const defaultStressConfig = {
     nodes: 1,
-    conductors: 5,
-    instances: 8,
+    conductors: 2,
+    instances: 2,
     endpoints: undefined,
     tests: {
         allOn: {
@@ -68,7 +68,7 @@ const defaultStressConfig = {
         },
         easy: {
             skip: false,
-            spinUpDelay: 0,
+            spinUpDelay: 10,
         }
     }
 }

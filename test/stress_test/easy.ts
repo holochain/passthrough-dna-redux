@@ -39,25 +39,44 @@ module.exports = (scenario, configBatch, N, C, I, sampleSize, spinUpDelay) => {
         const batch = new Batch(players).iteration('parallel')
 
         const agentIds = await batch.mapInstances(async instance => instance.agentAddress)
-        let results = []
-        let i = 0
-        let checkedCount = 0;
-        let mod = Math.floor(totalInstances/sampleSize)
-        await batch.mapInstances(async instance => {
-            if  ( i % mod == 0) {
-                checkedCount += 1
-                console.log(`\n-------------------------------------------\ngetting ${totalInstances} entries for ${i} (${instance.agentAddress})\n---------------------------\n`)
-                for (const id of agentIds) {
-                    if (instance.agentAddress != id) {
-                        await delay(getWait)
-                        const result = await instance.call('main', 'get_entry', {address: id})
-                        results.push( Boolean(result.Ok) )
+
+        let tries = 0
+        let last_results = []
+        while(true) {
+            let results = []
+            let i = 0
+            let checkedCount = 0;
+            let mod = Math.floor(totalInstances/sampleSize)
+            await batch.mapInstances(async instance => {
+                if  ( i % mod == 0) {
+                    checkedCount += 1
+                    console.log(`\n-------------------------------------------\ngetting ${totalInstances} entries for ${i} (${instance.agentAddress})\n---------------------------\n`)
+                    for (const id of agentIds) {
+                        if (instance.agentAddress != id) {
+                            await delay(getWait)
+                            console.log(`GETTING ENTRY FOR ${id}`)
+                            const result = await instance.call('main', 'get_entry', {address: id})
+                            results.push( Boolean(result.Ok) )
+                        }
                     }
                 }
+                i+=1
+            })
+            let expected =  R.repeat(true,checkedCount*(totalInstances-1))
+            if (JSON.stringify(expected)==JSON.stringify(results)) {
+                console.log("it worked", expected, results)
+                t.assert(true)
+                break
+            } else {
+                if (JSON.stringify(last_results)==JSON.stringify(results)) {
+                    console.log("it failed", expected, results)
+                    t.assert(false)
+                } else {
+                    tries += 1
+                    last_results = results
+                    console.log(`try ${tries} failed, trying again, got:`, results)
+                }
             }
-            i+=1
-        })
-        // All results contain the full set of other nodes
-        t.deepEqual(results , R.repeat(true,checkedCount*(totalInstances-1)))
+        }
     })
 }
