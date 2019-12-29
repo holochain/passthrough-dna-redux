@@ -51,12 +51,13 @@ module.exports = (scenario, configBatch, N, C, I, spinUpDelay, retryDelay, retri
             tries += 1
             console.log(`Checking holding: try ${tries}`)
             const dht_state = await getDHTstate(batch)
-            if (checkHolding(dht_state)) {
+            const {missing, held_by} = checkHolding(dht_state)
+            if (missing == 0) {
                 console.log("all are held")
                 t.pass()
                 break
             }
-            console.log("all not held, retrying after delay")
+            console.log(`all not held missing: ${missing}, retrying after delay`)
             await delay(retryDelay)
         }
         if (tries == retries) {
@@ -66,7 +67,7 @@ module.exports = (scenario, configBatch, N, C, I, spinUpDelay, retryDelay, retri
 }
 
 function checkHolding(dht_state) {
-    let all_held = true
+    let missing = 0
     let held_by = {}
     console.log("total number of entries returned by state dumps:", dht_state["entries"].length)
     for (const entry_address of dht_state["entries"]) {
@@ -79,10 +80,10 @@ function checkHolding(dht_state) {
         held_by[entry_address] = holders
         console.log(`${entry_address} is held by ${holders.length} agents`)
         if (holders.length === 0) {
-            all_held = false
+            missing += 1
         }
     }
-    return all_held
+    return {missing, held_by}
 }
 
 const getDHTstate = async (batch: Batch) => {
