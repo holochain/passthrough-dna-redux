@@ -46,12 +46,11 @@ module.exports = (scenario, configBatch, N, C, I, spinUpDelay, retryDelay, retri
         console.log('agentAddresses: ', agentAddresses.length, JSON.stringify(agentAddresses))
         console.log('agentSet: ', agentSet.size, JSON.stringify(Array.from(agentSet)))
 
-        const dht_state = await getDHTstate(batch)
-
         let tries = 0
         while (tries < retries) {
             tries += 1
             console.log(`Checking holding: try ${tries}`)
+            const dht_state = await getDHTstate(batch)
             if (checkHolding(dht_state)) {
                 console.log("all are held")
                 t.pass()
