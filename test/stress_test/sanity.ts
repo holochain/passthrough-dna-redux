@@ -39,30 +39,65 @@ module.exports = (scenario, configBatch, N, C, I, spinUpDelay) => {
         console.log('agentAddresses: ', agentAddresses.length, JSON.stringify(agentAddresses))
         console.log('agentSet: ', agentSet.size, JSON.stringify(Array.from(agentSet)))
 
-        const holding_map = await getHolding(batch)
-        console.log(holding_map)
+        const dht_state = await getDHTstate(batch)
+
+        let tries = 3
+        while (tries > 0) {
+            if (checkHolding(dht_state)) {
+                t.pass()
+                break
+            }
+            tries =- 1
+            await delay(10000)
+        }
+        if (tries == 0) {
+            t.fail()
+        }
     })
 }
 
-const getHolding = async (batch: Batch) => {
-    let DHTresult = {
-        entries: {}
+function checkHolding(dht_state) {
+    let all_held = true
+    let held_by = {}
+    console.log("total number of entries returned by state dumps:", dht_state["entries"].length)
+    for (const entry_address of dht_state["entries"]) {
+        let holders = []
+        for (const holding of dht_state["holding"]) {
+            if (holding.held_addresses.includes(entry_address)) {
+                holders.push(holding.agent_address)
+            }
+        }
+        held_by[entry_address] = holders
+        console.log(`${entry_address} is held by ${holders.length} agents`)
+        if (holders.length === 0) {
+            all_held = false
+        }
     }
-    DHTresult["holding"] = await batch.mapInstances(async instance => {
+    return all_held
+}
+
+const getDHTstate = async (batch: Batch) => {
+    let entries_map = {}
+    const holding_map = await batch.mapInstances(async instance => {
         const id = `${instance.id}:${instance.agentAddress}`
         console.log(`calling state dump for instance ${id})`)
         const dump = await instance.stateDump()
-        const heldHashes = R.keys(dump.held_aspects)
-        const sourceChains = R.values(dump.source_chain)
-        console.log("SOURCE:", sourceChains)
+        const held_addresses = R.keys(dump.held_aspects)
+        const source_chains = R.values(dump.source_chain)
         const entryMap = {}
-        for (const entry of sourceChains) {
-            console.log("ENTRY:", entry)
-            DHTresult.entries[entry.entry_address] = true
+        for (const entry of source_chains) {
+            if (entry.entry_type != "Dna" && entry.entry_type != "CapTokenGrant") {
+                entries_map[entry.entry_address] = true
+            }
         }
-        const result = {}
-        result[id] = heldHashes
-        return result
+        return {
+            instance_id: instance.id,
+            held_addresses,
+            agent_address: instance.agentAddress
+        }
     })
-    return DHTresult
+    return {
+        entries: R.keys(entries_map),
+        holding: holding_map
+    }
 }
