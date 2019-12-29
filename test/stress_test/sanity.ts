@@ -6,9 +6,16 @@ import { Batch } from '@holochain/tryorama-stress-utils'
 const trace = R.tap(x => console.log('{T}', x))
 const delay = ms => new Promise(r => setTimeout(r, ms))
 
-module.exports = (scenario, configBatch, N, C, I, spinUpDelay) => {
+module.exports = (scenario, configBatch, N, C, I, spinUpDelay, retryDelay, retries) => {
     const totalInstances = N*C*I
     const totalConductors = N*C
+
+    if (retryDelay == undefined) {
+        retryDelay = 10000
+    }
+    if (retries == undefined) {
+        retries = 3
+    }
 
     scenario('all hashes are available somewhere gettable', async (s, t) => {
         const players = R.sortBy(p => parseInt(p.name, 10), R.values(await s.players(configBatch(totalConductors, I), false)))
@@ -42,8 +49,7 @@ module.exports = (scenario, configBatch, N, C, I, spinUpDelay) => {
         const dht_state = await getDHTstate(batch)
 
         let tries = 0
-        const max_tries = 5
-        while (tries < max_tries) {
+        while (tries < retries) {
             tries += 1
             console.log(`Checking holding: try ${tries}`)
             if (checkHolding(dht_state)) {
@@ -52,7 +58,7 @@ module.exports = (scenario, configBatch, N, C, I, spinUpDelay) => {
                 break
             }
             console.log("all not held, retrying after delay")
-            await delay(10000)
+            await delay(retryDelay)
         }
         if (tries == max_tries) {
             t.fail()
