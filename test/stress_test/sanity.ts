@@ -41,16 +41,20 @@ module.exports = (scenario, configBatch, N, C, I, spinUpDelay) => {
 
         const dht_state = await getDHTstate(batch)
 
-        let tries = 3
-        while (tries > 0) {
+        let tries = 0
+        const max_tries = 5
+        while (tries < max_tries) {
+            tries += 1
+            console.log(`Checking holding: try ${tries}`)
             if (checkHolding(dht_state)) {
+                console.log("all are held")
                 t.pass()
                 break
             }
-            tries =- 1
+            console.log("all not held, retrying after delay")
             await delay(10000)
         }
-        if (tries == 0) {
+        if (tries == max_tries) {
             t.fail()
         }
     })
