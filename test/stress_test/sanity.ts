@@ -60,7 +60,7 @@ module.exports = (scenario, configBatch, N, C, I, spinUpDelay, retryDelay, retri
             console.log("all not held, retrying after delay")
             await delay(retryDelay)
         }
-        if (tries == max_tries) {
+        if (tries == retries) {
             t.fail()
         }
     })
