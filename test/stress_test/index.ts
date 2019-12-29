@@ -67,8 +67,11 @@ const defaultStressConfig = {
             skip: true
         },
         easy: {
-            skip: false,
+            skip: true,
             spinUpDelay: 10,
+        },
+        sanity: {
+            skip: false
         }
     }
 }
@@ -136,6 +139,11 @@ if (stressConfig.tests["allOn"]  && !stressConfig.tests["allOn"].skip) {
 if (stressConfig.tests["easy"]  && !stressConfig.tests["easy"].skip) {
     console.log("running easy")
     require('./easy')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances, stressConfig.tests["easy"].sampleSize, stressConfig.tests["easy"].spinUpDelay)
+}
+
+if (stressConfig.tests["sanity"]  && !stressConfig.tests["sanity"].skip) {
+    console.log("running sanity")
+    require('./sanity')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances, stressConfig.tests["sanity"].spinUpDelay)
 }
 
 if (stressConfig.tests["telephoneGame"] && !stressConfig.tests["telephoneGame"].skip) {
