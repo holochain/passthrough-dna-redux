@@ -143,7 +143,7 @@ if (stressConfig.tests["easy"]  && !stressConfig.tests["easy"].skip) {
 
 if (stressConfig.tests["sanity"]  && !stressConfig.tests["sanity"].skip) {
     console.log("running sanity")
-    require('./sanity')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances, stressConfig.tests["sanity"].spinUpDelay, stressConfig.tests["sanity"].retryDelay, stressConfig.tests["sanity"].retries)
+    require('./sanity')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances, stressConfig.tests["sanity"])
 }
 
 if (stressConfig.tests["telephoneGame"] && !stressConfig.tests["telephoneGame"].skip) {

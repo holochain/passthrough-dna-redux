@@ -6,15 +6,25 @@ import { Batch } from '@holochain/tryorama-stress-utils'
 const trace = R.tap(x => console.log('{T}', x))
 const delay = ms => new Promise(r => setTimeout(r, ms))
 
-module.exports = (scenario, configBatch, N, C, I, spinUpDelay, retryDelay, retries) => {
+module.exports = (scenario, configBatch, N, C, I, testConfig) => {
     const totalInstances = N*C*I
     const totalConductors = N*C
 
-    if (retryDelay == undefined) {
-        retryDelay = 10000
+    let spinUpDelay = 0
+    let retryDelay = 10000
+    let retries = 3
+    let commitCount = 0
+    if (testConfig.retryDelay != undefined) {
+        testConfig.retryDelay
     }
-    if (retries == undefined) {
-        retries = 3
+    if (testConfig.retries != undefined) {
+        retries = testConfig.retries
+    }
+    if (testConfig.spinUpDelay != undefined) {
+        spinUpDelay = testConfig.spinUpDelay
+    }
+    if (testConfig.commitCount != undefined) {
+        commitCount = testConfig.commitCount
     }
 
     scenario('all hashes are available somewhere gettable', async (s, t) => {
@@ -37,6 +47,19 @@ module.exports = (scenario, configBatch, N, C, I, spinUpDelay, retryDelay, retri
         } else {
             console.log(`spin up delay ${spinUpDelay}`)
             await delay(spinUpDelay)
+        }
+
+        if (commitCount > 0) {
+            console.log(`asking all nodes to commit ${commitCount} entries`)
+            let i = 0
+            while (i < commitCount) {
+                i+=1
+                // Make every instance of every conductor commit an entry
+                const commitResults = await batch.mapInstances(instance =>
+                                                               instance.call('main', 'commit_entry', { content: trace(`entry-${instance.player.name}-${instance.id}-${i}`) })
+                                                              )
+                //const hashes = commitResults.map(x => x.Ok)
+            }
         }
 
         const batch = new Batch(players).iteration('series')
