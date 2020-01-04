@@ -50,6 +50,7 @@ module.exports = (scenario, configBatch, N, C, I, testConfig) => {
         }
 
         if (commitCount > 0) {
+            const batch = new Batch(players).iteration('parallel')
             console.log(`asking all nodes to commit ${commitCount} entries`)
             let i = 0
             while (i < commitCount) {
@@ -58,12 +59,12 @@ module.exports = (scenario, configBatch, N, C, I, testConfig) => {
                 const commitResults = await batch.mapInstances(instance =>
                                                                instance.call('main', 'commit_entry', { content: trace(`entry-${instance.player.name}-${instance.id}-${i}`) })
                                                               )
-                //const hashes = commitResults.map(x => x.Ok)
+                const hashes = commitResults.map(x => x.Ok)
+                console.log(`commit result ${hashes}`)
             }
         }
 
         const batch = new Batch(players).iteration('series')
-
         const agentAddresses = await batch.mapInstances(async instance => instance.agentAddress)
         const agentSet = new Set(agentAddresses)
         console.log('agentAddresses: ', agentAddresses.length, JSON.stringify(agentAddresses))
