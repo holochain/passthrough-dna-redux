@@ -117,9 +117,9 @@ const getDHTstate = async (batch: Batch) => {
         console.log(`calling state dump for instance ${id})`)
         const dump = await instance.stateDump()
         const held_addresses = R.keys(dump.held_aspects)
-        const source_chains = R.values(dump.source_chain)
+        const sourceChain = R.values(dump.source_chain)
         const entryMap = {}
-        for (const entry of source_chains) {
+        for (const entry of sourceChain) {
             if (entry.entry_type != "Dna" && entry.entry_type != "CapTokenGrant") {
                 entries_map[entry.entry_address] = true
             }
