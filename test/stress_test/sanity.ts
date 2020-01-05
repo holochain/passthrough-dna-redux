@@ -49,8 +49,8 @@ module.exports = (scenario, configBatch, N, C, I, testConfig) => {
             await delay(spinUpDelay)
         }
 
+        let batch = new Batch(players).iteration('parallel')
         if (commitCount > 0) {
-            const batch = new Batch(players).iteration('parallel')
             console.log(`asking all nodes to commit ${commitCount} entries`)
             let i = 0
             while (i < commitCount) {
@@ -64,7 +64,7 @@ module.exports = (scenario, configBatch, N, C, I, testConfig) => {
             }
         }
 
-        const batch = new Batch(players).iteration('series')
+        batch.iteration('series')
         const agentAddresses = await batch.mapInstances(async instance => instance.agentAddress)
         const agentSet = new Set(agentAddresses)
         console.log('agentAddresses: ', agentAddresses.length, JSON.stringify(agentAddresses))
