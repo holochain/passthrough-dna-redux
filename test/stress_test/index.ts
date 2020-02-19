@@ -108,10 +108,16 @@ const orchestrator = new Orchestrator({
     middleware,
 })
 
+const tracing = ({playerName}) => ({
+  type: 'jaeger',
+  service_name: `holochain-${playerName}-`+runName
+})
+
 const commonConfig = {
   network,
   logger: Config.logger(true),
   metric_publisher
+  tracing
 }
 
 const batcher = (numConductors, instancesPerConductor) => configBatchSimple(
