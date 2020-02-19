@@ -116,7 +116,7 @@ const tracing = ({playerName}) => ({
 const commonConfig = {
   network,
   logger: Config.logger(true),
-  metric_publisher
+  metric_publisher,
   tracing
 }
 
