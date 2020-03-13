@@ -28,13 +28,13 @@ switch (networkType) {
   case 'sim2h':
     network = {
       type: 'sim2h',
-      sim2h_url: "wss://localhost:9002",
+      sim2h_url: "ws://localhost:9002",
     }
     break
   case 'sim2h_public':
       network = {
           type: 'sim2h',
-          sim2h_url: "wss://sim2h.holochain.org:9000",
+          sim2h_url: "ws://sim2h.holochain.org:9000",
       }
       break
   default:

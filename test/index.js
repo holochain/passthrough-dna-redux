@@ -45,6 +45,29 @@ orchestrator.registerScenario("Can commit an entry then get", async (s, t) => {
   t.deepEqual(get_result.Ok.App[1], "entry content ...")
 })
 
+orchestrator.registerScenario.only("Can commit an entry and link then get links", async (s, t) => {
+  const { alice } = await s.players({ alice: config }, true)
+  const commit1 = await alice.call('app', 'main', 'commit_entry', {
+    content: 'content'
+  })
+  const commit2 = await alice.call('app', 'main', 'commit_entry', {
+    content: 'content'
+  })
+  const hash1 = commit1.Ok
+  const hash2 = commit2.Ok
+
+  const linkResult = await alice.call('app', 'main', 'link_entries', {
+    base: hash1,
+    target: hash2,
+  })
+  t.ok(linkResult.Ok)
+
+  const aliceLinks = await alice.call('app', 'main', 'get_links', {
+    base: hash1
+  })
+  t.equal(aliceLinks.Ok.links.length, 1)
+})
+
 orchestrator.registerScenario("Can send message and get response", async (s, t) => {
   const { alice, bob } = await s.players({ alice: config, bob: config }, true)
   const result = await alice.call("app", "main", "send", { to_agent: bob.info('app').agentAddress, payload: "message payload .." })
@@ -69,7 +92,7 @@ orchestrator.registerScenario("Can add two entries, link together then retrieve"
 })
 
 
-orchestrator.registerScenario.only('late joiners still hold aspects', async (s, t) => {
+orchestrator.registerScenario('late joiners still hold aspects', async (s, t) => {
   const { alice } = await s.players({ alice: config }, true)
 
   const commit1 = await alice.call('app', 'main', 'commit_entry', {
@@ -92,6 +115,7 @@ orchestrator.registerScenario.only('late joiners still hold aspects', async (s, 
   const { bob, carol } = await s.players({ bob: config, carol: config }, true)
 
   await s.consistency()
+  // await new Promise(r => setTimeout(r, 30000)) // keep this until consistency works with dynamic starting agents
 
   // after the consistency waiting inherent in auto-spawning the new players, their state dumps
   // should immediately show that they are holding alice's entries
@@ -108,6 +132,9 @@ orchestrator.registerScenario.only('late joiners still hold aspects', async (s, 
   t.ok(hash2 in carolDump.held_aspects)
   t.ok(linkHash in carolDump.held_aspects)
 
+  const aliceLinks = await alice.call('app', 'main', 'get_links', {
+    base: hash1
+  })
   const bobLinks = await bob.call('app', 'main', 'get_links', {
     base: hash1
   })
@@ -115,6 +142,7 @@ orchestrator.registerScenario.only('late joiners still hold aspects', async (s, 
     base: hash1
   })
 
+  t.equal(aliceLinks.Ok.links.length, 1)
   t.equal(bobLinks.Ok.links.length, 1)
   t.equal(carolLinks.Ok.links.length, 1)
 
