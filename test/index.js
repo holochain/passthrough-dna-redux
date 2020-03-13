@@ -17,6 +17,8 @@ if (process.env.HC_TRANSPORT_CONFIG) {
     transport_config=require(process.env.HC_TRANSPORT_CONFIG)
 }
 
+const delay = ms => new Promise(r => setTimeout(r, ms))
+
 const dnaPath = path.join(__dirname, "../dist/passthrough-dna.dna.json")
 const dna = Config.dna(dnaPath, 'passthrough-dna')
 console.log(Config.logger(false))
@@ -48,10 +50,10 @@ orchestrator.registerScenario("Can commit an entry then get", async (s, t) => {
 orchestrator.registerScenario.only("Can commit an entry and link then get links", async (s, t) => {
   const { alice } = await s.players({ alice: config }, true)
   const commit1 = await alice.call('app', 'main', 'commit_entry', {
-    content: 'content'
+    content: 'content1'
   })
   const commit2 = await alice.call('app', 'main', 'commit_entry', {
-    content: 'content'
+    content: 'content2'
   })
   const hash1 = commit1.Ok
   const hash2 = commit2.Ok
@@ -62,10 +64,21 @@ orchestrator.registerScenario.only("Can commit an entry and link then get links"
   })
   t.ok(linkResult.Ok)
 
+  const commit3 = await alice.call('app', 'main', 'commit_entry', {
+    content: 'content3'
+  })
+
   const aliceLinks = await alice.call('app', 'main', 'get_links', {
     base: hash1
   })
   t.equal(aliceLinks.Ok.links.length, 1)
+
+
+  const aliceDump = await alice.stateDump('app')
+  console.log(aliceDump)
+
+  console.log("NOW!!!!")
+ // await delay(30000)
 })
 
 orchestrator.registerScenario("Can send message and get response", async (s, t) => {
