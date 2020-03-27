@@ -21,14 +21,54 @@ const delay = ms => new Promise(r => setTimeout(r, ms))
 
 const dnaPath = path.join(__dirname, "../dist/passthrough-dna.dna.json")
 const dna = Config.dna(dnaPath, 'passthrough-dna')
-console.log(Config.logger(false))
+const logger = {
+  type: 'debug',
+  rules: {
+    rules: [
+      {
+        exclude: true,
+        pattern: '.*parity.*'
+      },
+      {
+        exclude: true,
+        pattern: '.*mio.*'
+      },
+      {
+        exclude: true,
+        pattern: '.*tokio.*'
+      },
+      {
+        exclude: true,
+        pattern: '.*hyper.*'
+      },
+      {
+        exclude: true,
+        pattern: '.*rusoto_core.*'
+      },
+      {
+        exclude: true,
+        pattern: '.*want.*'
+      },
+      {
+        exclude: true,
+        pattern: '.*rpc.*'
+      }
+    ]
+  },
+  state_dump: true
+  // dpki: {
+  //   instance_id: 'dpki_happ',
+  //   init_params: {"revocation_key": "HcSCiPdMkst9geux7y7kPoVx3W54Ebwkk6fFWjH9V6oIbqi77H4i9qGXRsDcdbi","signed_auth_key":"zJkRXrrbvbzbH96SpapO5lDWoElpzB1rDE+4zbo/VthM/mp9qNKaVsGiVKnHkqT4f5J4MGN+q18xP/hwQUKyDA=="}
+  // },
+}
+
 const config = Config.gen(
     {
         app: dna
     },
     // global configuration info
     {
-        ... Config.logger(false),
+      ... logger,
         network: transport_config
     }
 )
@@ -78,7 +118,7 @@ orchestrator.registerScenario.only("Can commit an entry and link then get links"
   console.log(aliceDump)
 
   console.log("NOW!!!!")
- // await delay(30000)
+  await delay(30000)
 })
 
 orchestrator.registerScenario("Can send message and get response", async (s, t) => {
