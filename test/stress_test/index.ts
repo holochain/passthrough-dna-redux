@@ -28,13 +28,13 @@ switch (networkType) {
   case 'sim2h':
     network = {
       type: 'sim2h',
-      sim2h_url: "wss://localhost:9002",
+      sim2h_url: "ws://localhost:9002",
     }
     break
   case 'sim2h_public':
       network = {
           type: 'sim2h',
-          sim2h_url: "wss://sim2h.holochain.org:9000",
+          sim2h_url: "ws://sim2h.holochain.org:9000",
       }
       break
   default:
@@ -101,9 +101,51 @@ const orchestrator = new Orchestrator({
     middleware,
 })
 
+const logger = {
+    type: 'debug',
+    rules: {
+        rules: [
+            {
+                exclude: true,
+                pattern: '.*parity.*'
+            },
+            {
+                exclude: true,
+                pattern: '.*mio.*'
+            },
+            {
+                exclude: true,
+                pattern: '.*tokio.*'
+            },
+            {
+                exclude: true,
+                pattern: '.*hyper.*'
+            },
+            {
+                exclude: true,
+                pattern: '.*rusoto_core.*'
+            },
+            {
+                exclude: true,
+                pattern: '.*want.*'
+            },
+                  {
+                exclude: true,
+                pattern: '.*rpc.*'
+            }
+        ]
+    },
+    state_dump: true
+    // dpki: {
+    //   instance_id: 'dpki_happ',
+    //   init_params: {"revocation_key": "HcSCiPdMkst9geux7y7kPoVx3W54Ebwkk6fFWjH9V6oIbqi77H4i9qGXRsDcdbi","signed_auth_key":"zJkRXrrbvbzbH96SpapO5lDWoElpzB1rDE+4zbo/VthM/mp9qNKaVsGiVKnHkqT4f5J4MGN+q18xP/hwQUKyDA=="}
+    // },
+}
+
 const commonConfig = {
   network,
-  logger: Config.logger(true),
+    //  logger: Config.logger(true),
+    logger,
   metric_publisher
 }
 

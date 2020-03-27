@@ -11,7 +11,7 @@ module.exports = (scenario, configBatch, N, C, I) => {
   const totalConductors = N*C
     scenario('one at a time', async (s, t) => {
       const configs = configBatch(totalConductors, I)
-      let  p =   await s.players(configs, true)
+      let p = await s.players(configs, true)
       const players = R.sortBy(p => parseInt(p.name, 10), R.values(p))
       const batch = new Batch(players).iteration('series')
 
