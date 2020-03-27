@@ -7,7 +7,7 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-		<script type="text/javascript" src="hc-web-client-0.5.1.browser.min.js"></script>
+		<script type="text/javascript" src="hc-web-client-0.5.3.browser.min.js"></script>
 		<style>
 			.scroll-list {
 		    height: 20em;
@@ -49,7 +49,7 @@
 			<div style="display: table-row">
 
 				<div style="display: table-cell;">
-					<h5>Log</h5>	
+					<h5>Log</h5>
 			    <ul id="log" class="scroll-list">
 			        <li class="action" v-for="(log, index) in logs">
 			            <div>
@@ -61,14 +61,14 @@
 			  </div>
 
 				<div style="width: 600px; display: table-cell;">
-					<h5>Actions</h5>	
+					<h5>Actions</h5>
 			    <ul id="actions" class="scroll-list">
 			        <li class="action" v-for="(action, index) in signals">
 			            <div>
 			            	<span>{{ action.timestamp.toISOString() }}</span>
-			                <a data-toggle="collapse" 
-                                v-bind:href="'#action-'+index" 
-                                role="button" aria-expanded="false" 
+			                <a data-toggle="collapse"
+                                v-bind:href="'#action-'+index"
+                                role="button" aria-expanded="false"
                                 v-bind:aria-controls="'action-'+index"
                                 :class="'bade badge-pill badge-' + actionTypeToBadge(action.action_type)"
                             >
@@ -133,15 +133,15 @@
 				<label for="update-content">New Content</label>
 				<input id="update-content" v-model="updateContent" placeholder="new content">
 				<button v-on:click="updateEntry">Update</button>
-			</div>		
+			</div>
 
 			<div>
 				<label for="remove-address">Address</label>
 				<input id="remove-address" v-model="removeAddress" placeholder="Qm...">
 				<button v-on:click="removeEntry">Remove</button>
-			</div>	
+			</div>
 
-			<hr />	
+			<hr />
 
 			<h5>Direct Messaging</h5>
 
@@ -178,10 +178,10 @@
       		text: err,
       		error: true,
       	})
-      })			
+      })
 		}
 
-		var app = new Vue({ 
+		var app = new Vue({
 	    el: '#app',
 	    data: {
     		signals: [],
@@ -212,16 +212,16 @@
 		    },
 		    linkEntries: function () {
 		      makeCall("link_entries_typed")({base: app.linkBase, target: app.linkTarget, link_type: app.linkType})
-		    },      
+		    },
 		    getLinks: function () {
 		      makeCall("get_links")({base: app.getLinksBase})
-		    },  
+		    },
 		    updateEntry: function () {
 		      makeCall("update_entry")({address: app.updateAddress, new_content: app.updateContent})
-		    },   
+		    },
 		    removeEntry: function () {
 		      makeCall("remove_entry")({address: app.removeAddress})
-		    },    
+		    },
 		    actionTypeToBadge: (actionType) => {
             switch(actionType) {
                 case "SignalZomeFunctionCall": return "info"
@@ -257,7 +257,7 @@
 	      		timestamp: new Date(),
 	      		text: `Received direct message: ${signal.signal.arguments}`,
 	      		error: false,
-	      	})					
+	      	})
 				}
 			})
 		})

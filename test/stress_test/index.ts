@@ -8,7 +8,7 @@ process.on('unhandledRejection', error => {
   console.error('got unhandledRejection:', error);
 });
 
-const networkType = process.env.APP_SPEC_NETWORK_TYPE || 'sim2h_public'
+const networkType = process.env.APP_SPEC_NETWORK_TYPE || 'sim2h'
 let network = null
 
 // default middleware is localOnly
@@ -19,24 +19,12 @@ switch (networkType) {
     network = Config.network('memory')
     middleware = compose(tapeExecutor(require('tape')), singleConductor)
     break
-  case 'sim1h':
-    network = {
-      type: 'sim1h',
-      dynamo_url: "http://localhost:8000",
-    }
-    break
   case 'sim2h':
     network = {
       type: 'sim2h',
-      sim2h_url: "wss://localhost:9002",
+      sim2h_url: "ws://localhost:9000",
     }
     break
-  case 'sim2h_public':
-      network = {
-          type: 'sim2h',
-          sim2h_url: "wss://sim2h.holochain.org:9000",
-      }
-      break
   default:
     throw new Error(`Unsupported network type: ${networkType}`)
 }
@@ -48,13 +36,13 @@ if (process.env.HC_TRANSPORT_CONFIG) {
 
 // default stress test is local (because there are no endpoints specified)
 const defaultStressConfig = {
-  nodes: 1,
+    nodes: 1,
     conductors: 10,
     instances: 1,
     endpoints: undefined,
     tests: {
         allOn: {
-            skip: false
+            skip: true
         },
         telephoneGame: {
             skip: true
@@ -64,8 +52,15 @@ const defaultStressConfig = {
             count: 10
         },
         directMessage: {
-            skip: false
+            skip: true
         },
+        easy: {
+            skip: true,
+            spinUpDelay: 10,
+        },
+        sanity: {
+            skip: false
+        }
     }
 }
 
@@ -75,7 +70,7 @@ const runName = process.argv[2] || ""+Date.now()  // default exam name is just a
 const stressConfig = process.argv[3] ? require(process.argv[3]) : defaultStressConfig
 
 const dnaLocal = Config.dna('../dist/passthrough-dna.dna.json', 'passthrough')
-const dnaRemote = Config.dna('https://github.com/holochain/passthrough-dna/releases/download/v0.0.6/passthrough-dna.dna.json', 'passthrough')
+const dnaRemote = Config.dna('https://github.com/holochain/passthrough-dna/releases/download/v0.0.8/passthrough-dna.dna.json', 'passthrough')
 let chosenDna = dnaLocal;
 
 let metric_publisher;
@@ -101,10 +96,16 @@ const orchestrator = new Orchestrator({
     middleware,
 })
 
+const tracing = ({playerName}) => ({
+  type: 'jaeger',
+  service_name: `holochain-${playerName}-`+runName
+})
+
 const commonConfig = {
   network,
   logger: Config.logger(true),
-  metric_publisher
+  metric_publisher,
+  tracing
 }
 
 const batcher = (numConductors, instancesPerConductor) => configBatchSimple(
@@ -114,7 +115,7 @@ const batcher = (numConductors, instancesPerConductor) => configBatchSimple(
   commonConfig
 )
 
-console.log(`Running stress test id=${runName} with Nodes=${stressConfig.nodes} Conductors=${stressConfig.conductors}, Instances=${stressConfig.instances}`)
+console.log(`Running stress test id=${runName} with Config: \n`, stressConfig)
 
 if (stressConfig.tests == undefined) {
   stressConfig.tests = {
@@ -127,6 +128,16 @@ if (stressConfig.tests == undefined) {
 if (stressConfig.tests["allOn"]  && !stressConfig.tests["allOn"].skip) {
   console.log("running all-on")
   require('./all-on')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances)
+}
+
+if (stressConfig.tests["easy"]  && !stressConfig.tests["easy"].skip) {
+    console.log("running easy")
+    require('./easy')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances, stressConfig.tests["easy"].sampleSize, stressConfig.tests["easy"].spinUpDelay)
+}
+
+if (stressConfig.tests["sanity"]  && !stressConfig.tests["sanity"].skip) {
+    console.log("running sanity")
+    require('./sanity')(orchestrator.registerScenario, batcher, stressConfig.nodes, stressConfig.conductors, stressConfig.instances, stressConfig.tests["sanity"])
 }
 
 if (stressConfig.tests["telephoneGame"] && !stressConfig.tests["telephoneGame"].skip) {

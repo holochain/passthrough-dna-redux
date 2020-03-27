@@ -9,8 +9,8 @@ process.on('unhandledRejection', error => {
 });
 
 var transport_config = {
-    type: 'sim1h',
-    dynamo_url: "http://localhost:8000"
+    type: 'sim2h',
+    sim2h_url: "ws://localhost:9000"
 }
 
 if (process.env.HC_TRANSPORT_CONFIG) {
