@@ -12,20 +12,37 @@
 This DNA exposes some of the HDK API function directly. In this case it is kind of a passthrough letting you call make certain holochain calls (e.g. commit, get_entry, link, get_links etc) without any logic inbetween.
 It is intended for testing and experimentation purposes.
 
-## Example
+## Examples
 
+### Sanity test
 Run a sanity test using the passthrough DNA:
 
 ``` shell
 cd test
-npm i
+npm install
 npm run test:stress
 ```
+
+### UI for manual testing
+
+1. Compile the wasm DNA and run the conductor with it:
+``` shell
+hc package
+holochain -c conductor-config.toml
+```
+2. In a separate terminal run the UI using simply python web server
+
+``` shell
+cd ui
+python -m SimpleHTTPServer 8888
+```
+
+Now go to `localhost:8888` in a browser and you should see the UI connected to the conductor and be able to make hdk calls.
 
 ## License
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
-Copyright (C) 2019, Holochain Foundation
+Copyright (C) 2019-2020, Holochain Foundation
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

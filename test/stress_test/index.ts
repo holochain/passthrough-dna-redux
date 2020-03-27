@@ -46,7 +46,7 @@ const defaultStressConfig = {
         },
         telephoneGame: {
             skip: true
-        },
+        },q
         telephoneHammer: {
             skip: true,
             count: 10

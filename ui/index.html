@@ -241,18 +241,19 @@
 		  }
 		});
 
-		window.holochainclient.connect().then(({callZome, onSignal}) => {
+	 window.holochainclient.connect({ url: "ws://localhost:3000"}).then(({callZome, onSignal}) => {
+             console.log("CONNECTED!")
 			app.callZome = callZome
 			callZome("test-instance", "main", "whoami")({}).then(result => {
 				app.agentId = JSON.parse(result).Ok
 			})
 			onSignal((signal) => {
 				console.log(signal)
-				if (signal.signal.signal_type === "Trace") {
+				if (signal.signal && signal.signal.signal_type === "Trace") {
 					const action = signal.signal.action
 					action.timestamp = new Date()
 					app.signals.push(action)
-				} else if (signal.signal.signal_type === "User" && signal.signal.name === "message_received") {
+				} else if (signal.signal && signal.signal.signal_type === "User" && signal.signal.name === "message_received") {
 	      	app.logs.push({
 	      		timestamp: new Date(),
 	      		text: `Received direct message: ${signal.signal.arguments}`,

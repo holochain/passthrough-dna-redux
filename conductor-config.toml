@@ -31,7 +31,7 @@ id = 'websocket-interface'
 id = 'test-instance'
 
 [interfaces.driver]
-port = 8888
+port = 3000
 type = 'websocket'
 
 [logger]
