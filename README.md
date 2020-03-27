@@ -12,6 +12,16 @@
 This DNA exposes some of the HDK API function directly. In this case it is kind of a passthrough letting you call make certain holochain calls (e.g. commit, get_entry, link, get_links etc) without any logic inbetween.
 It is intended for testing and experimentation purposes.
 
+## Example
+
+Run a sanity test using the passthrough DNA:
+
+``` shell
+cd test
+npm i
+npm run test:stress
+```
+
 ## License
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 

@@ -12,7 +12,7 @@ test_agent = true
 
 [[dnas]]
 file = './dist/passthrough-dna.dna.json'
-hash = 'QmNT541aXcG4mzUw1fbpxkgCqextkm4mgGyyTcNbG5ShAg'
+hash = 'QmcjoGNWszyb9pbZEXkj9Ujk8vpycRL47VqTSjfvrU4JVs'
 id = 'hc-run-dna'
 
 [[instances]]

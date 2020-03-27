@@ -8,7 +8,7 @@ process.on('unhandledRejection', error => {
   console.error('got unhandledRejection:', error);
 });
 
-const networkType = process.env.APP_SPEC_NETWORK_TYPE || 'sim2h_public'
+const networkType = process.env.APP_SPEC_NETWORK_TYPE || 'sim2h'
 let network = null
 
 // default middleware is localOnly
@@ -19,24 +19,12 @@ switch (networkType) {
     network = Config.network('memory')
     middleware = compose(tapeExecutor(require('tape')), singleConductor)
     break
-  case 'sim1h':
-    network = {
-      type: 'sim1h',
-      dynamo_url: "http://localhost:8000",
-    }
-    break
   case 'sim2h':
     network = {
       type: 'sim2h',
-      sim2h_url: "ws://localhost:9002",
+      sim2h_url: "ws://localhost:9000",
     }
     break
-  case 'sim2h_public':
-      network = {
-          type: 'sim2h',
-          sim2h_url: "wss://sim2h.holochain.org:9000",
-      }
-      break
   default:
     throw new Error(`Unsupported network type: ${networkType}`)
 }
@@ -82,7 +70,7 @@ const runName = process.argv[2] || ""+Date.now()  // default exam name is just a
 const stressConfig = process.argv[3] ? require(process.argv[3]) : defaultStressConfig
 
 const dnaLocal = Config.dna('../dist/passthrough-dna.dna.json', 'passthrough')
-const dnaRemote = Config.dna('https://github.com/holochain/passthrough-dna/releases/download/v0.0.7-rc1/passthrough-dna.dna.json', 'passthrough')
+const dnaRemote = Config.dna('https://github.com/holochain/passthrough-dna/releases/download/v0.0.8/passthrough-dna.dna.json', 'passthrough')
 let chosenDna = dnaLocal;
 
 let metric_publisher;
