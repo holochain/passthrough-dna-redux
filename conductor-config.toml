@@ -12,7 +12,7 @@ test_agent = true
 
 [[dnas]]
 file = './dist/passthrough-dna.dna.json'
-hash = 'QmcjoGNWszyb9pbZEXkj9Ujk8vpycRL47VqTSjfvrU4JVs'
+hash = 'QmXTXkBncTPre6ncL9KYRSuDepSc5WyJyMB847g4fNJv8G'
 id = 'hc-run-dna'
 
 [[instances]]
@@ -40,6 +40,10 @@ type = 'debug'
 
 [logger.rules]
 rules = []
+
+[network]
+sim2h_url = 'ws://sim2h-test.holo.host:9001'
+type = 'sim2h'
 
 [passphrase_service]
 type = 'cmd'
