@@ -5,14 +5,14 @@ ui_interfaces = []
 
 [[agents]]
 id = 'hc-run-agent'
-keystore_file = 'testAgent'
-name = 'testAgent'
-public_address = 'HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
+keystore_file = 'testAgent1'
+name = 'testAgent1'
+public_address = 'HcSCiT653tXzNP5hs5JOWPJMURc4pukquwpchbUQU4wuxdesZiVdHtG36Ct3npa'
 test_agent = true
 
 [[dnas]]
-file = './dist/passthrough-dna.dna.json'
-hash = 'QmcjoGNWszyb9pbZEXkj9Ujk8vpycRL47VqTSjfvrU4JVs'
+file = '../../dist/passthrough-dna.dna.json'
+hash = 'Qmdg49z7rwKQi92LbbMT94b9enGLU14BxgjNGFkTCjFsmb'
 id = 'hc-run-dna'
 
 [[instances]]
@@ -21,7 +21,8 @@ dna = 'hc-run-dna'
 id = 'test-instance'
 
 [instances.storage]
-type = 'memory'
+path = '../var/agent1db'
+type = 'lmdb'
 
 [[interfaces]]
 admin = true
@@ -35,11 +36,15 @@ port = 8888
 type = 'websocket'
 
 [logger]
-state_dump = true
+state_dump = false
 type = 'debug'
 
 [logger.rules]
 rules = []
+
+[network]
+sim2h_url = 'ws://sim2h-test.holo.host:9001'
+type = 'sim2h'
 
 [passphrase_service]
 type = 'cmd'

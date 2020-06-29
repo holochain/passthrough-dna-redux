@@ -1,0 +1,54 @@
+bridges = []
+persistence_dir = ''
+ui_bundles = []
+ui_interfaces = []
+
+[[agents]]
+id = 'hc-run-agent'
+keystore_file = 'testAgent3'
+name = 'testAgent3'
+public_address = 'HcSCj5dUvTmXtxv3buQkScqxRP7iauwx3xWDA6IgJ9MjvmzqSbg9i5adVc3h3qr'
+test_agent = true
+
+[[dnas]]
+file = '../../dist/passthrough-dna.dna.json'
+hash = 'Qmdg49z7rwKQi92LbbMT94b9enGLU14BxgjNGFkTCjFsmb'
+id = 'hc-run-dna'
+
+[[instances]]
+agent = 'hc-run-agent'
+dna = 'hc-run-dna'
+id = 'test-instance'
+
+[instances.storage]
+path = '../var/agent3db'
+type = 'lmdb'
+
+[[interfaces]]
+admin = true
+id = 'websocket-interface'
+
+[[interfaces.instances]]
+id = 'test-instance'
+
+[interfaces.driver]
+port = 8890
+type = 'websocket'
+
+[logger]
+state_dump = false
+type = 'debug'
+
+[logger.rules]
+rules = []
+
+[network]
+sim2h_url = 'ws://sim2h-test.holo.host:9001'
+type = 'sim2h'
+
+[passphrase_service]
+type = 'cmd'
+
+[signals]
+consistency = false
+trace = false

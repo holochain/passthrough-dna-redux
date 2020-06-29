@@ -58,7 +58,7 @@ mod my_zome {
             description: "Entry with no validation not even on structure. Just an arbitrary string.",
             sharing: Sharing::Public,
             validation_package: || {
-                hdk::ValidationPackageDefinition::Entry
+                hdk::ValidationPackageDefinition::ChainFull
             },
             validation: | _validation_data: hdk::EntryValidationData<String>| {
                 Ok(())
